@@ -1,0 +1,1 @@
+from cpgintegrate.connectors.openclinica import OpenClinica
