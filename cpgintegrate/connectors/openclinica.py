@@ -54,15 +54,12 @@ class OpenClinica:
             pd.DataFrame((form_to_dict(form) for form in forms)).
             set_index('SubjectData:StudySubjectID', drop=True).
             assign(
-                Source=lambda frame: frame.apply(
-                    lambda row:
-                        self.base_url+'rest/clinicaldata/html/print/'
-                        + '/'.join([self.study_oid, row['SubjectData:SubjectKey'],
-                                    row['StudyEventData:StudyEventOID'] + '%5B{!s}%5D'.
-                                    format(row.get('StudyEventData:StudyEventRepeatKey', 1)),
-                                    row['FormData:FormOID']])
-                        + '?includeAudits=y&includeDNs=y',
-                    axis=1
-                )
+                Source=lambda frame:
+                self.base_url + 'rest/clinicaldata/html/print/' + self.study_oid + '/'
+                + frame['SubjectData:SubjectKey'].str.cat([
+                    frame['StudyEventData:StudyEventOID'] +
+                    '%5B' + frame.get('StudyEventData:StudyEventRepeatKey', "1") + '%5D',
+                    frame['FormData:FormOID']], sep="/"
+                ) + '?includeAudits=y&includeDNs=y',
             )
         )
