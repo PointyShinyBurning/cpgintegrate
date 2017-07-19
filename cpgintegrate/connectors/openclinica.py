@@ -52,7 +52,7 @@ class OpenClinica:
 
         return (
             pd.DataFrame((form_to_dict(form) for form in forms)).
-            set_index('SubjectData:StudySubjectID', drop=False).
+            set_index('SubjectData:StudySubjectID', drop=True).
             assign(
                 Source=lambda frame: frame.apply(
                     lambda row:
