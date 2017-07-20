@@ -1,2 +1,5 @@
 .idea/
 build/
+.cache/
+cpgintegrate.egg-info/
+dist/

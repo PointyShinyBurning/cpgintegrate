@@ -46,8 +46,8 @@ class OpenClinica:
                 **{k: v for item_group in form.xpath('./default:ItemGroupData', namespaces=nsmap)
                    for k, v in item_group_listize(item_group)})
 
-        forms = tree.xpath(".//default:FormData[starts-with(@FormOID,'%s')]" % form_oid_prefix,
-                           namespaces=nsmap)
+        forms = tree.xpath(".//default:FormData[starts-with(@FormOID,'%s') and @OpenClinica:Status != 'invalid']"
+                           % form_oid_prefix, namespaces=nsmap)
 
         return (
             pd.DataFrame((form_to_dict(form) for form in forms)).

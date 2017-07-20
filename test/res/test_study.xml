@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ODM FileOID="Study-MetaD20170720153358+0100" Description="Study Metadata" CreationDateTime="2017-07-20T15:33:58+01:00" FileType="Snapshot" ODMVersion="1.3" xmlns="http://www.cdisc.org/ns/odm/v1.3" xmlns:OpenClinica="http://www.openclinica.org/ns/odm_ext_v130/v3.1" xmlns:OpenClinicaRules="http://www.openclinica.org/ns/rules/v3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cdisc.org/ns/odm/v1.3 OpenClinica-ODM1-3-0-OC2-0.xsd" >
+    <Study OID="S_CPG_TEST">
+        <GlobalVariables>
+            <StudyName>Test Study for cpgintegrate module</StudyName>
+            <StudyDescription>
+                Some
+Science
+            </StudyDescription>
+            <ProtocolName>CPG_TEST_STUDY</ProtocolName>
+        </GlobalVariables>
+        <BasicDefinitions>
+            <MeasurementUnit OID="MU_KG" Name="kg">
+                <Symbol>
+                    <TranslatedText>kg</TranslatedText>
+                </Symbol>
+            </MeasurementUnit>
+            <MeasurementUnit OID="MU_KPA" Name="kPa">
+                <Symbol>
+                    <TranslatedText>kPa</TranslatedText>
+                </Symbol>
+            </MeasurementUnit>
+        </BasicDefinitions>
+        <MetaDataVersion OID="v1.0.0" Name="MetaDataVersion_v1.0.0">
+            <Protocol>
+                <StudyEventRef StudyEventOID="SE_FAKEEVENT" OrderNumber="1" Mandatory="Yes"/>
+            </Protocol>
+            <StudyEventDef OID="SE_FAKEEVENT"  Name="Fake Event" Repeating="Yes" Type="Scheduled">
+                <FormRef FormOID="F_GRIPSTRENGTH_021" Mandatory="Yes"/>
+                <FormRef FormOID="F_GRIPSTRENGTH_02" Mandatory="Yes"/>
+                <FormRef FormOID="F_GRIPSTRENGTH_012" Mandatory="Yes"/>
+                <FormRef FormOID="F_GRIPSTRENGTH_011" Mandatory="Yes"/>
+                <FormRef FormOID="F_GRIPSTRENGTH_01" Mandatory="Yes"/>
+                <OpenClinica:EventDefinitionDetails StudyEventOID="SE_FAKEEVENT">
+                    <OpenClinica:Description>An event that never happened</OpenClinica:Description>
+                </OpenClinica:EventDefinitionDetails>
+            </StudyEventDef>
+            <FormDef OID="F_GRIPSTRENGTH_021" Name="Grip Strength - 0.21" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_UNGROUPED" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_GRIP" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_GRIPSTRENGTH_021" ParentFormOID="F_GRIPSTRENGTH">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="Grip" SectionTitle="Grip" SectionSubtitle="" SectionInstructions="" SectionPageNumber=""/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>2014-09-01</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Dominant hand</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_FAKEEVENT" IsDefaultVersion="Yes" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" AllowAnonymousSubmission="No" Offline="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_GRIPSTRENGTH_02" Name="Grip Strength - 0.2" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_UNGROUPED" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_GRIP" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_GRIPSTRENGTH_02" ParentFormOID="F_GRIPSTRENGTH">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="Grip" SectionTitle="Grip" SectionSubtitle="" SectionInstructions="" SectionPageNumber=""/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>2014-08-22</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>kPa instead of kg</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_FAKEEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" AllowAnonymousSubmission="No" Offline="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_GRIPSTRENGTH_012" Name="Grip Strength - 0.12" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_UNGROUPED" Mandatory="Yes"/>
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_GRIP" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_GRIPSTRENGTH_012" ParentFormOID="F_GRIPSTRENGTH">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="Grip" SectionTitle="Grip" SectionSubtitle="" SectionInstructions="" SectionPageNumber=""/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>2014-05-22</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Created</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_FAKEEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" AllowAnonymousSubmission="No" Offline="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_GRIPSTRENGTH_011" Name="Grip Strength - 0.11" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_GRIP" Mandatory="No"/>
+                <OpenClinica:FormDetails FormOID="F_GRIPSTRENGTH_011" ParentFormOID="F_GRIPSTRENGTH">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="Grip" SectionTitle="Grip" SectionSubtitle="" SectionInstructions="" SectionPageNumber=""/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>2014-05-22</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Created</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_FAKEEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" AllowAnonymousSubmission="No" Offline="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <FormDef OID="F_GRIPSTRENGTH_01" Name="Grip Strength - 0.1" Repeating="No">
+                <ItemGroupRef ItemGroupOID="IG_GRIPS_UNGROUPED" Mandatory="Yes"/>
+                <OpenClinica:FormDetails FormOID="F_GRIPSTRENGTH_01" ParentFormOID="F_GRIPSTRENGTH">
+                    <OpenClinica:SectionDetails>
+                        <OpenClinica:Section SectionLabel="Grip" SectionTitle="Grip" SectionSubtitle="" SectionInstructions="" SectionPageNumber=""/>
+                    </OpenClinica:SectionDetails>
+                    <OpenClinica:VersionDescription>2014-05-22</OpenClinica:VersionDescription>
+                    <OpenClinica:RevisionNotes>Created</OpenClinica:RevisionNotes>
+                    <OpenClinica:PresentInEventDefinition StudyEventOID="SE_FAKEEVENT" IsDefaultVersion="No" PasswordRequired="No" DoubleDataEntry="No" HideCRF="No" ParticipantForm="No" AllowAnonymousSubmission="No" Offline="No" SourceDataVerification="not_required"/>
+                </OpenClinica:FormDetails>
+            </FormDef>
+            <ItemGroupDef OID="IG_GRIPS_UNGROUPED" Name="IG_GRIPS_UNGROUPED" Repeating="No" SASDatasetName="UNGROUPE">
+                <ItemRef ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA" OrderNumber="1" Mandatory="No"/>
+                <ItemRef ItemOID="I_GRIPS_DOMINANTHAND" OrderNumber="2" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_GRIPS_GRIPSTRENGTHMAX" OrderNumber="3" Mandatory="No"/>
+                <ItemRef ItemOID="I_GRIPS_GRIP" OrderNumber="4" Mandatory="Yes"/>
+                <OpenClinica:ItemGroupDetails ItemGroupOID="IG_GRIPS_UNGROUPED">
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_021" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_02" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_012" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_01" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="1" RepeatMax="1"/>
+                    </OpenClinica:PresentInForm>
+                </OpenClinica:ItemGroupDetails>
+            </ItemGroupDef>
+            <ItemGroupDef OID="IG_GRIPS_GRIP" Name="Grip" Repeating="Yes" SASDatasetName="GRIP">
+                <ItemRef ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" OrderNumber="1" Mandatory="Yes"/>
+                <ItemRef ItemOID="I_GRIPS_GRIPSTRENGTH" OrderNumber="2" Mandatory="Yes"/>
+                <OpenClinica:ItemGroupDetails ItemGroupOID="IG_GRIPS_GRIP">
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_021" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="3" RepeatMax="3"/>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_02" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="3" RepeatMax="3"/>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_012" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="3" RepeatMax="3"/>
+                    </OpenClinica:PresentInForm>
+                    <OpenClinica:PresentInForm FormOID="F_GRIPSTRENGTH_011" ShowGroup="Yes">
+                        <OpenClinica:ItemGroupRepeat RepeatNumber="3" RepeatMax="3"/>
+                    </OpenClinica:PresentInForm>
+                </OpenClinica:ItemGroupDetails>
+            </ItemGroupDef>
+            <ItemDef OID="I_GRIPS_GRIPSTRENGTHMAX_KPA" Name="GripStrengthMax_kpa" DataType="float" Length="25" SignificantDigits="6" SASFieldName="GripStre" Comment="Maximum Grip Strength" OpenClinica:FormOIDs="F_GRIPSTRENGTH_021,F_GRIPSTRENGTH_02">
+                <Question>
+                    <TranslatedText>
+                    Max
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_KPA"/>
+                <OpenClinica:ItemDetails ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA">
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_021" PHI="No" ShowItem="Yes" OrderInForm= "3">
+                        <OpenClinica:LeftItemText>Max</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="group-calculation"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_02" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>Max</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="group-calculation"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_GRIPS_DOMINANTHAND" Name="DominantHand" DataType="text" Length="12" SASFieldName="Dominant" Comment="Dominant Hand" OpenClinica:FormOIDs="F_GRIPSTRENGTH_021">
+                <Question>
+                    <TranslatedText>
+                    Dominant Hand
+                    </TranslatedText>
+                </Question>
+                <CodeListRef CodeListOID="CL_425"/>
+                <OpenClinica:ItemDetails ItemOID="I_GRIPS_DOMINANTHAND">
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_021" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>Dominant Hand</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="radio" ResponseLayout="Horizontal"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_GRIPS_GRIPSTRENGTH_KPA" Name="GripStrength_kpa" DataType="float" Length="25" SignificantDigits="6" SASFieldName="GripS001" Comment="Grip Strength" OpenClinica:FormOIDs="F_GRIPSTRENGTH_021,F_GRIPSTRENGTH_02">
+                <Question>
+                    <TranslatedText>
+                    Grip Strength
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_KPA"/>
+                <OpenClinica:ItemDetails ItemOID="I_GRIPS_GRIPSTRENGTH_KPA">
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_021" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>Grip Strength</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_02" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>Grip Strength</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_GRIPS_GRIPSTRENGTHMAX" Name="GripStrengthMax" DataType="float" Length="25" SignificantDigits="6" SASFieldName="GripS002" Comment="Maximum Grip Strength" OpenClinica:FormOIDs="F_GRIPSTRENGTH_012">
+                <Question>
+                    <TranslatedText>
+                    Max
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_KG"/>
+                <OpenClinica:ItemDetails ItemOID="I_GRIPS_GRIPSTRENGTHMAX">
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_012" PHI="No" ShowItem="Yes" OrderInForm= "2">
+                        <OpenClinica:LeftItemText>Max</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="group-calculation"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_GRIPS_GRIPSTRENGTH" Name="GripStrength" DataType="float" Length="25" SignificantDigits="6" SASFieldName="GripS003" Comment="Grip Strength" OpenClinica:FormOIDs="F_GRIPSTRENGTH_012,F_GRIPSTRENGTH_011">
+                <Question>
+                    <TranslatedText>
+                    Grip Strength
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_KG"/>
+                <OpenClinica:ItemDetails ItemOID="I_GRIPS_GRIPSTRENGTH">
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_012" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>Grip Strength</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_011" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>Grip Strength</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <ItemDef OID="I_GRIPS_GRIP" Name="Grip" DataType="float" Length="25" SignificantDigits="6" SASFieldName="Grip" Comment="Grip" OpenClinica:FormOIDs="F_GRIPSTRENGTH_01">
+                <Question>
+                    <TranslatedText>
+                    Grip
+                    </TranslatedText>
+                </Question>
+                <MeasurementUnitRef MeasurementUnitOID="MU_KG"/>
+                <OpenClinica:ItemDetails ItemOID="I_GRIPS_GRIP">
+                    <OpenClinica:ItemPresentInForm FormOID="F_GRIPSTRENGTH_01" PHI="No" ShowItem="Yes" OrderInForm= "1">
+                        <OpenClinica:LeftItemText>Grip</OpenClinica:LeftItemText>
+                        <OpenClinica:SectionLabel>Grip</OpenClinica:SectionLabel>
+                        <OpenClinica:ItemResponse ResponseType="text"/>
+                    </OpenClinica:ItemPresentInForm>
+                </OpenClinica:ItemDetails>
+            </ItemDef>
+            <CodeList OID="CL_425" Name="DominantHand" DataType="text" SASFormatName="$DOMINAN">
+                <CodeListItem CodedValue="Left">
+                    <Decode>
+                        <TranslatedText>Left</TranslatedText>
+                    </Decode>
+                </CodeListItem>
+                <CodeListItem CodedValue="Right">
+                    <Decode>
+                        <TranslatedText>Right</TranslatedText>
+                    </Decode>
+                </CodeListItem>
+                <CodeListItem CodedValue="Ambidextrous">
+                    <Decode>
+                        <TranslatedText>Ambidextrous</TranslatedText>
+                    </Decode>
+                </CodeListItem>
+            </CodeList>
+            <OpenClinica:StudyDetails StudyOID="S_CPG_TEST">
+                <OpenClinica:StudyDescriptionAndStatus DateCreated="2017-07-20" StartDate="2017-07-20">
+                    <OpenClinica:StudySytemStatus>available</OpenClinica:StudySytemStatus>
+                    <OpenClinica:PrincipalInvestigator>Elmo</OpenClinica:PrincipalInvestigator>
+                    <OpenClinica:Sponsor>n_a</OpenClinica:Sponsor>
+                    <OpenClinica:StudyPhase>N/A</OpenClinica:StudyPhase>
+                    <OpenClinica:ProtocolType>Interventional</OpenClinica:ProtocolType>
+                    <OpenClinica:Purpose>Treatment</OpenClinica:Purpose>
+                </OpenClinica:StudyDescriptionAndStatus>
+                <OpenClinica:ConditionsAndEligibility>
+                    <OpenClinica:Sex>Both</OpenClinica:Sex>
+                    <OpenClinica:HealthyVolunteersAccepted>No</OpenClinica:HealthyVolunteersAccepted>
+                    <OpenClinica:ExpectedTotalEnrollment>10</OpenClinica:ExpectedTotalEnrollment>
+                </OpenClinica:ConditionsAndEligibility>
+                <OpenClinica:RelatedInformation>
+                    <OpenClinica:ResultsReference>No</OpenClinica:ResultsReference>
+                </OpenClinica:RelatedInformation>
+                <OpenClinica:StudyParameterConfiguration>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_collectDob" Value="3"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_discrepancyManagement" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectPersonIdRequired" Value="not used"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_genderRequired" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_subjectIdGeneration" Value="manual"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameRequired" Value="not_used"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameDefault" Value="re-populated"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewerNameEditable" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewDateRequired" Value="not_used"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewDateDefault" Value="re-populated"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_interviewDateEditable" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_personIdShownOnCRF" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_secondaryLabelViewable" Value="false"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_adminForcedReasonForChange" Value="true"/>
+                    <OpenClinica:StudyParameterListRef StudyParameterListID="SPL_eventLocationRequired" Value="not_used"/>
+                    <OpenClinica:StudyParameterList ID="SPL_collectDob" Name="Collect Subject Date Of Birth">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="1">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="2">
+                            <Decode>
+                                <TranslatedText>Only Year of Birth</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="3">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_discrepancyManagement" Name="Allow Discrepancy Management">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_subjectPersonIdRequired" Name="Person ID Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="required">
+                            <Decode>
+                                <TranslatedText>Required</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="optional">
+                            <Decode>
+                                <TranslatedText>Optional</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_genderRequired" Name="Sex Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_subjectIdGeneration" Name="How To Generate Study SubjectID">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="manual">
+                            <Decode>
+                                <TranslatedText>Manual Entry</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="auto editable">
+                            <Decode>
+                                <TranslatedText>Auto-generated and Editable</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="auto non-editable">
+                            <Decode>
+                                <TranslatedText>Auto-generated and Non-editable</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewerNameRequired" Name="When Performing Data Entry, Interviewer Name Required For Data Entry">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="yes">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="no">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not_used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewerNameDefault" Name="When Performing Data Entry, Interviewer Name Default as Blank">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="blank">
+                            <Decode>
+                                <TranslatedText>Blank</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="pre-populated">
+                            <Decode>
+                                <TranslatedText>Pre-Populated from active user</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewerNameEditable" Name="When Performing Data Entry, Interviewer Name Editable">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewDateRequired" Name="When Performing Data Entry, Interview Date Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not_used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewDateDefault" Name="When Performing Data Entry, Interview Date Default as Blank">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="blank">
+                            <Decode>
+                                <TranslatedText>Blank</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="pre-populated">
+                            <Decode>
+                                <TranslatedText>Pre-Populated from Study Event</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_interviewDateEditable" Name="When Performing Data Entry, Interview Date Editable">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_personIdShownOnCRF" Name="Show Person ID on CRF Header">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_secondaryLabelViewable" Name="Secondary Label Viewable">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_adminForcedReasonForChange" Name="Forced Reason For Change in Administrative Editing">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="true">
+                            <Decode>
+                                <TranslatedText>Yes</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="false">
+                            <Decode>
+                                <TranslatedText>No</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                    <OpenClinica:StudyParameterList ID="SPL_eventLocationRequired" Name="Event Location Required">
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="required">
+                            <Decode>
+                                <TranslatedText>Required</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="optional">
+                            <Decode>
+                                <TranslatedText>Optional</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                        <OpenClinica:StudyParameterListItem CodedParameterValue="not_used">
+                            <Decode>
+                                <TranslatedText>Not Used</TranslatedText>
+                            </Decode>
+                        </OpenClinica:StudyParameterListItem>
+                    </OpenClinica:StudyParameterList>
+                </OpenClinica:StudyParameterConfiguration>
+            </OpenClinica:StudyDetails>
+        </MetaDataVersion>
+    </Study>
+    <AdminData StudyOID="S_CPG_TEST">
+        <User OID="USR_2">
+            <FullName>Daniel Key</FullName>
+            <FirstName>Daniel</FirstName>
+            <LastName>Key</LastName>
+            <Organization>UCL</Organization>
+        </User>
+    </AdminData>
+    <ClinicalData StudyOID="S_CPG_TEST" MetaDataVersionOID="null">
+        <SubjectData SubjectKey="SS_VICTIM_3_3185" OpenClinica:StudySubjectID="VICTIM_3" OpenClinica:Status="removed" OpenClinica:Sex="null" OpenClinica:EnrollmentDate="2017-07-20">
+            <StudyEventData StudyEventOID="SE_FAKEEVENT" OpenClinica:StartDate="2017-07-20" OpenClinica:EndDate="2017-07-20" OpenClinica:Status="completed" StudyEventRepeatKey="1">
+                <FormData FormOID="F_GRIPSTRENGTH_021" OpenClinica:Version="0.21" OpenClinica:Status="invalid">
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="50">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555472" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="50"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="2" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="50">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555474" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="50"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="3" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="50">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555476" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="50"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_UNGROUPED" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_DOMINANTHAND" Value="Ambidextrous">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_DOMINANTHAND">
+                                <OpenClinica:AuditLog ID="AL_555470" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="Ambidextrous"
+                                                      ValueType="DominantHand"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA" Value="50.0000">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTHMAX_KPA">
+                                <OpenClinica:AuditLog ID="AL_555478" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="50.0000"
+                                                      ValueType="GripStrengthMax_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <OpenClinica:AuditLogs EntityID="F_GRIPSTRENGTH_021">
+                        <OpenClinica:AuditLog ID="AL_555467" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:07" 
+                                              AuditType="Event CRF Started" 
+                                              OldValue="unavailable" 
+                                              NewValue="available"
+                                              ValueType="Status"/>
+                        <OpenClinica:AuditLog ID="AL_555469" DateTimeStamp="2017-07-20T15:32:15" 
+                                              AuditType="Event CRF properties changed" 
+                                              OldValue="rmgpdak" 
+                                              ValueType="Interviewer Name"/>
+                        <OpenClinica:AuditLog ID="AL_555480" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                              AuditType="Event CRF marked complete" 
+                                              OldValue="available" 
+                                              NewValue="unavailable"
+                                              ValueType="Status"/>
+                    </OpenClinica:AuditLogs>
+                </FormData>
+                <OpenClinica:AuditLogs EntityID="SE_FAKEEVENT">
+                    <OpenClinica:AuditLog ID="AL_555468" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:07" 
+                                          AuditType="Study Event data entry started" 
+                                          OldValue="scheduled" 
+                                          NewValue="data entry started"
+                                          ValueType="Status"/>
+                    <OpenClinica:AuditLog ID="AL_555481" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:15" 
+                                          AuditType="Study Event completed" 
+                                          OldValue="data entry started" 
+                                          NewValue="completed"
+                                          ValueType="Status"/>
+                </OpenClinica:AuditLogs>
+            </StudyEventData>
+            <OpenClinica:AuditLogs EntityID="SS_VICTIM_3_3185">
+                <OpenClinica:AuditLog ID="AL_555465" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:06" 
+                                      AuditType="Subject Created" />
+                <OpenClinica:AuditLog ID="AL_555466" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:32:06" 
+                                      AuditType="Study Subject Created" />
+                <OpenClinica:AuditLog ID="AL_555482" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:33:31" 
+                                      AuditType="Study subject status changed" 
+                                      OldValue="available" 
+                                      NewValue="removed"
+                                      ValueType="Status"/>
+            </OpenClinica:AuditLogs>
+        </SubjectData>
+        <SubjectData SubjectKey="SS_VICTIM_2" OpenClinica:StudySubjectID="VICTIM_2" OpenClinica:Status="available" OpenClinica:Sex="null" OpenClinica:EnrollmentDate="2017-07-20">
+            <StudyEventData StudyEventOID="SE_FAKEEVENT" OpenClinica:StartDate="2017-07-20" OpenClinica:EndDate="2017-07-20" OpenClinica:Status="completed" StudyEventRepeatKey="1">
+                <FormData FormOID="F_GRIPSTRENGTH_021" OpenClinica:Version="0.21" OpenClinica:Status="data entry complete">
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="30">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555440" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="30"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="2" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="30">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555442" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="30"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="3" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="30">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555444" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="30"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_UNGROUPED" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_DOMINANTHAND" Value="Ambidextrous">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_DOMINANTHAND">
+                                <OpenClinica:AuditLog ID="AL_555438" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="Ambidextrous"
+                                                      ValueType="DominantHand"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA" Value="30.0000">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTHMAX_KPA">
+                                <OpenClinica:AuditLog ID="AL_555446" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="30.0000"
+                                                      ValueType="GripStrengthMax_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <OpenClinica:AuditLogs EntityID="F_GRIPSTRENGTH_021">
+                        <OpenClinica:AuditLog ID="AL_555435" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:14" 
+                                              AuditType="Event CRF Started" 
+                                              OldValue="unavailable" 
+                                              NewValue="available"
+                                              ValueType="Status"/>
+                        <OpenClinica:AuditLog ID="AL_555437" DateTimeStamp="2017-07-20T15:31:22" 
+                                              AuditType="Event CRF properties changed" 
+                                              OldValue="rmgpdak" 
+                                              ValueType="Interviewer Name"/>
+                        <OpenClinica:AuditLog ID="AL_555448" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                              AuditType="Event CRF marked complete" 
+                                              OldValue="available" 
+                                              NewValue="unavailable"
+                                              ValueType="Status"/>
+                    </OpenClinica:AuditLogs>
+                </FormData>
+                <OpenClinica:AuditLogs EntityID="SE_FAKEEVENT">
+                    <OpenClinica:AuditLog ID="AL_555436" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:14" 
+                                          AuditType="Study Event data entry started" 
+                                          OldValue="scheduled" 
+                                          NewValue="data entry started"
+                                          ValueType="Status"/>
+                    <OpenClinica:AuditLog ID="AL_555449" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:22" 
+                                          AuditType="Study Event completed" 
+                                          OldValue="data entry started" 
+                                          NewValue="completed"
+                                          ValueType="Status"/>
+                </OpenClinica:AuditLogs>
+            </StudyEventData>
+            <StudyEventData StudyEventOID="SE_FAKEEVENT" OpenClinica:StartDate="2017-07-20" OpenClinica:Status="completed" StudyEventRepeatKey="2">
+                <FormData FormOID="F_GRIPSTRENGTH_021" OpenClinica:Version="0.21" OpenClinica:Status="data entry complete">
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="40">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555455" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="40"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="2" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="40">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555457" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="40"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="3" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="40">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555459" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="40"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_UNGROUPED" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_DOMINANTHAND" Value="Right">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_DOMINANTHAND">
+                                <OpenClinica:AuditLog ID="AL_555453" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="Right"
+                                                      ValueType="DominantHand"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA" Value="40.0000">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTHMAX_KPA">
+                                <OpenClinica:AuditLog ID="AL_555461" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="40.0000"
+                                                      ValueType="GripStrengthMax_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <OpenClinica:AuditLogs EntityID="F_GRIPSTRENGTH_021">
+                        <OpenClinica:AuditLog ID="AL_555450" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:40" 
+                                              AuditType="Event CRF Started" 
+                                              OldValue="unavailable" 
+                                              NewValue="available"
+                                              ValueType="Status"/>
+                        <OpenClinica:AuditLog ID="AL_555452" DateTimeStamp="2017-07-20T15:31:47" 
+                                              AuditType="Event CRF properties changed" 
+                                              OldValue="rmgpdak" 
+                                              ValueType="Interviewer Name"/>
+                        <OpenClinica:AuditLog ID="AL_555463" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                              AuditType="Event CRF marked complete" 
+                                              OldValue="available" 
+                                              NewValue="unavailable"
+                                              ValueType="Status"/>
+                    </OpenClinica:AuditLogs>
+                </FormData>
+                <OpenClinica:AuditLogs EntityID="SE_FAKEEVENT">
+                    <OpenClinica:AuditLog ID="AL_555451" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:40" 
+                                          AuditType="Study Event data entry started" 
+                                          OldValue="scheduled" 
+                                          NewValue="data entry started"
+                                          ValueType="Status"/>
+                    <OpenClinica:AuditLog ID="AL_555464" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:47" 
+                                          AuditType="Study Event completed" 
+                                          OldValue="data entry started" 
+                                          NewValue="completed"
+                                          ValueType="Status"/>
+                </OpenClinica:AuditLogs>
+            </StudyEventData>
+            <OpenClinica:AuditLogs EntityID="SS_VICTIM_2">
+                <OpenClinica:AuditLog ID="AL_555433" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:12" 
+                                      AuditType="Subject Created" />
+                <OpenClinica:AuditLog ID="AL_555434" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:31:12" 
+                                      AuditType="Study Subject Created" />
+            </OpenClinica:AuditLogs>
+        </SubjectData>
+        <SubjectData SubjectKey="SS_VICTIM_1" OpenClinica:StudySubjectID="VICTIM_1" OpenClinica:Status="available" OpenClinica:Sex="null" OpenClinica:EnrollmentDate="2017-07-20">
+            <StudyEventData StudyEventOID="SE_FAKEEVENT" OpenClinica:StartDate="2017-07-20" OpenClinica:EndDate="2017-07-20" OpenClinica:Status="completed" StudyEventRepeatKey="1">
+                <FormData FormOID="F_GRIPSTRENGTH_021" OpenClinica:Version="0.21" OpenClinica:Status="data entry complete">
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="10">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555407" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="10"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="2" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="10">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555409" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="10"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="3" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="10">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555411" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="10"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_UNGROUPED" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_DOMINANTHAND" Value="Left">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_DOMINANTHAND">
+                                <OpenClinica:AuditLog ID="AL_555405" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="Left"
+                                                      ValueType="DominantHand"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA" Value="10.0000">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTHMAX_KPA">
+                                <OpenClinica:AuditLog ID="AL_555413" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="10.0000"
+                                                      ValueType="GripStrengthMax_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <OpenClinica:AuditLogs EntityID="F_GRIPSTRENGTH_021">
+                        <OpenClinica:AuditLog ID="AL_555402" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:28" 
+                                              AuditType="Event CRF Started" 
+                                              OldValue="unavailable" 
+                                              NewValue="available"
+                                              ValueType="Status"/>
+                        <OpenClinica:AuditLog ID="AL_555404" DateTimeStamp="2017-07-20T15:30:35" 
+                                              AuditType="Event CRF properties changed" 
+                                              OldValue="rmgpdak" 
+                                              ValueType="Interviewer Name"/>
+                        <OpenClinica:AuditLog ID="AL_555415" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                              AuditType="Event CRF marked complete" 
+                                              OldValue="available" 
+                                              NewValue="unavailable"
+                                              ValueType="Status"/>
+                    </OpenClinica:AuditLogs>
+                </FormData>
+                <OpenClinica:AuditLogs EntityID="SE_FAKEEVENT">
+                    <OpenClinica:AuditLog ID="AL_555403" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:28" 
+                                          AuditType="Study Event data entry started" 
+                                          OldValue="scheduled" 
+                                          NewValue="data entry started"
+                                          ValueType="Status"/>
+                    <OpenClinica:AuditLog ID="AL_555416" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:35" 
+                                          AuditType="Study Event completed" 
+                                          OldValue="data entry started" 
+                                          NewValue="completed"
+                                          ValueType="Status"/>
+                </OpenClinica:AuditLogs>
+            </StudyEventData>
+            <StudyEventData StudyEventOID="SE_FAKEEVENT" OpenClinica:StartDate="2017-07-20" OpenClinica:Status="completed" StudyEventRepeatKey="2">
+                <FormData FormOID="F_GRIPSTRENGTH_021" OpenClinica:Version="0.21" OpenClinica:Status="invalid">
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="20">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555422" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="20"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="2" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="20">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555424" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="20"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_GRIP" ItemGroupRepeatKey="3" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTH_KPA" Value="20">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTH_KPA">
+                                <OpenClinica:AuditLog ID="AL_555426" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="20"
+                                                      ValueType="GripStrength_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <ItemGroupData ItemGroupOID="IG_GRIPS_UNGROUPED" ItemGroupRepeatKey="1" TransactionType="Insert">
+                        <ItemData ItemOID="I_GRIPS_DOMINANTHAND" Value="Left">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_DOMINANTHAND">
+                                <OpenClinica:AuditLog ID="AL_555420" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="Left"
+                                                      ValueType="DominantHand"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                        <ItemData ItemOID="I_GRIPS_GRIPSTRENGTHMAX_KPA" Value="20.0000">
+                            <OpenClinica:AuditLogs EntityID="I_GRIPS_GRIPSTRENGTHMAX_KPA">
+                                <OpenClinica:AuditLog ID="AL_555428" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                                      AuditType="Item data value updated" 
+                                                      ReasonForChange="initial value" 
+                                                      NewValue="20.0000"
+                                                      ValueType="GripStrengthMax_kpa"/>
+                            </OpenClinica:AuditLogs>
+                        </ItemData>
+                    </ItemGroupData>
+                    <OpenClinica:AuditLogs EntityID="F_GRIPSTRENGTH_021">
+                        <OpenClinica:AuditLog ID="AL_555417" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:46" 
+                                              AuditType="Event CRF Started" 
+                                              OldValue="unavailable" 
+                                              NewValue="available"
+                                              ValueType="Status"/>
+                        <OpenClinica:AuditLog ID="AL_555419" DateTimeStamp="2017-07-20T15:30:52" 
+                                              AuditType="Event CRF properties changed" 
+                                              OldValue="rmgpdak" 
+                                              ValueType="Interviewer Name"/>
+                        <OpenClinica:AuditLog ID="AL_555430" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                              AuditType="Event CRF marked complete" 
+                                              OldValue="available" 
+                                              NewValue="unavailable"
+                                              ValueType="Status"/>
+                    </OpenClinica:AuditLogs>
+                </FormData>
+                <OpenClinica:AuditLogs EntityID="SE_FAKEEVENT">
+                    <OpenClinica:AuditLog ID="AL_555418" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:46" 
+                                          AuditType="Study Event data entry started" 
+                                          OldValue="scheduled" 
+                                          NewValue="data entry started"
+                                          ValueType="Status"/>
+                    <OpenClinica:AuditLog ID="AL_555431" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:52" 
+                                          AuditType="Study Event completed" 
+                                          OldValue="data entry started" 
+                                          NewValue="completed"
+                                          ValueType="Status"/>
+                </OpenClinica:AuditLogs>
+            </StudyEventData>
+            <OpenClinica:AuditLogs EntityID="SS_VICTIM_1">
+                <OpenClinica:AuditLog ID="AL_555400" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:26" 
+                                      AuditType="Subject Created" />
+                <OpenClinica:AuditLog ID="AL_555401" UserID="USR_2" UserName="rmgpdak" Name="Daniel Key" DateTimeStamp="2017-07-20T15:30:26" 
+                                      AuditType="Study Subject Created" />
+            </OpenClinica:AuditLogs>
+        </SubjectData>
+    </ClinicalData>
+</ODM>
