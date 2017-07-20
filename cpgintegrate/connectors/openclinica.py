@@ -5,10 +5,9 @@ import pandas as pd
 
 class OpenClinica:
 
-    def __init__(self, openclinica_url: str, study_oid: str, subject_id_name: str = 'SubjectID'):
+    def __init__(self, openclinica_url: str, study_oid: str):
         self.base_url = openclinica_url
         self.study_oid = study_oid
-        self.subject_id_name = subject_id_name
         self.xml = None
         self.session = None
 
@@ -55,7 +54,7 @@ class OpenClinica:
             set_index('SubjectData:StudySubjectID', drop=True).
             assign(
                 Source=lambda frame:
-                self.base_url + 'rest/clinicaldata/html/print/' + self.study_oid + '/'
+                self.base_url + '/rest/clinicaldata/html/print/' + self.study_oid + '/'
                 + frame['SubjectData:SubjectKey'].str.cat([
                     frame['StudyEventData:StudyEventOID'] +
                     '%5B' + frame.get('StudyEventData:StudyEventRepeatKey', "1") + '%5D',
