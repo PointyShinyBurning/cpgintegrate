@@ -10,7 +10,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor: typing.C
             try:
                 df = processor(file)
             except Exception:
-                df = pandas.DataFrame({"error": traceback.format_exc()})
+                df = pandas.DataFrame({"error": [traceback.format_exc()]})
 
             yield (df
                    .assign(Source=getattr(file, 'name', None),
