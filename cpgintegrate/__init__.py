@@ -17,4 +17,4 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor: typing.C
                            SubjectID=getattr(file, 'cpgintegrate_subject_id', None),
                            FileSubjectID=df.index if df.index.name else None))
 
-    return pandas.concat((frame for frame in get_frames())).set_index("SubjectID")
+    return pandas.DataFrame(pandas.concat((frame for frame in get_frames()))).set_index("SubjectID")
