@@ -23,7 +23,7 @@ def to_frame(file):
 
             temp_txt = open(os.path.join(temp_dir, "temp.txt"), "r")
             file = temp_txt.read().splitlines()
-            sheet = pandas.DataFrame(index=[file[2].split(":")[1].split(" ")[0]])
+            sheet = pandas.DataFrame({"SubjectID": [file[2].split(":")[1].split(" ")[0]]}).set_index("SubjectID")
             for l in [re.split("[\[\]]", l) for l in file if l.startswith("Stiffness")]:
                 sheet[l[0] + "(" + l[2].strip() + ")"] = l[1]
 
