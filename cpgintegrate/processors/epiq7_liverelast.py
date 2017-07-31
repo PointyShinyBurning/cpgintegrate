@@ -14,7 +14,7 @@ def to_frame(file):
 
     if file.name.endswith(".pdf"):
         with tempfile.TemporaryDirectory() as temp_dir:
-            os.chdir(temp_dir.name)
+            os.chdir(temp_dir)
 
             temp_file = open("temp.pdf", "wb")
             temp_file.write(file.read())
