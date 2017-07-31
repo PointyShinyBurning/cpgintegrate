@@ -13,26 +13,27 @@ def to_frame(file):
     """
 
     if file.name.endswith(".pdf"):
-        temp_dir = tempfile.TemporaryDirectory()
-        os.chdir(temp_dir.name)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir.name)
 
-        temp_file = open("temp.pdf", "wb")
-        temp_file.write(file.read())
-        temp_file.close()
+            temp_file = open("temp.pdf", "wb")
+            temp_file.write(file.read())
+            temp_file.close()
 
-        os.system("pdftotext -raw temp.pdf")
+            os.system("pdftotext -raw temp.pdf")
 
-        temp_txt = open("temp.txt", "r")
-        file = temp_txt.read().splitlines()
-        sheet = pandas.DataFrame({"SubjectID": [file[2].split(":")[1].split(" ")[0]]})
-        for l in [re.split("[\[\]]", l) for l in file if l.startswith("Stiffness")]:
-            sheet[l[0] + "(" + l[2].strip() + ")"] = l[1]
+            temp_txt = open("temp.txt", "r")
+            file = temp_txt.read().splitlines()
+            sheet = pandas.DataFrame(index=[[file[2].split(":")[1].split(" ")[0]]])
+            for l in [re.split("[\[\]]", l) for l in file if l.startswith("Stiffness")]:
+                sheet[l[0] + "(" + l[2].strip() + ")"] = l[1]
 
-        data = pandas.DataFrame()
-        for l in [re.split("[\[\]]", l) for l in file if not (l.startswith("Stiffness")) and ('[' in l) and 'kPa' in l]:
-            data = data.append({"measNum": int(l[0][-3:-1]), "value (%s)" % l[2].strip(): l[1]}, ignore_index=True)
+            data = pandas.DataFrame()
+            for l in [re.split("[\[\]]", l)
+                      for l in file if not (l.startswith("Stiffness")) and ('[' in l) and 'kPa' in l]:
+                data = data.append({"measNum": int(l[0][-3:-1]), "value (%s)" % l[2].strip(): l[1]}, ignore_index=True)
 
-        temp_txt.close()
+            temp_txt.close()
     else:
         excel_file = pandas.ExcelFile(file)
 
@@ -73,4 +74,4 @@ def to_frame(file):
                               },
                      inplace=True)
 
-    return sheet.set_index("SubjectID")
+    return sheet
