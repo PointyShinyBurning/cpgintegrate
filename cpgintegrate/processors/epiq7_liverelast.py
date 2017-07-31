@@ -14,17 +14,16 @@ def to_frame(file):
 
     if file.name.endswith(".pdf"):
         with tempfile.TemporaryDirectory() as temp_dir:
-            os.chdir(temp_dir)
 
-            temp_file = open("temp.pdf", "wb")
+            temp_file = open(os.path.join(temp_dir, "temp.pdf"), "wb")
             temp_file.write(file.read())
             temp_file.close()
 
-            os.system("pdftotext -raw temp.pdf")
+            os.system("pdftotext -raw %s" % temp_file.name)
 
-            temp_txt = open("temp.txt", "r")
+            temp_txt = open(os.path.join(temp_dir, "temp.txt"), "r")
             file = temp_txt.read().splitlines()
-            sheet = pandas.DataFrame(index=[[file[2].split(":")[1].split(" ")[0]]])
+            sheet = pandas.DataFrame(index=[file[2].split(":")[1].split(" ")[0]])
             for l in [re.split("[\[\]]", l) for l in file if l.startswith("Stiffness")]:
                 sheet[l[0] + "(" + l[2].strip() + ")"] = l[1]
 
