@@ -51,6 +51,7 @@ def to_frame(file):
         sheet.replace('(?i)kpa', '', inplace=True, regex=True)
 
         sheet = sheet.pivot("id", "var", "val")
+        sheet.index.name = None
         meas = meas.iloc[0:first_blank]
         meas.dropna(inplace=True, how="all")
 
@@ -58,6 +59,7 @@ def to_frame(file):
 
         sheet.rename(columns={"Median": "Stiffness Med (kPa)",
                               "SD": "Stiffness Std (kPa)",
+                              "Avg": "Stiffness Avg (kPa)",
                               "Stiffness Avg": "Stiffness Avg (kPa)",
                               "Stiffness Med": "Stiffness Med (kPa)",
                               "Stiffness Std": "Stiffness Std (kPa)",
