@@ -9,5 +9,6 @@ setup(
         'requests>=2.10',
         'lxml>=3',
         'pandas>=0.18.1',
+        'xlrd',
     ]
 )
