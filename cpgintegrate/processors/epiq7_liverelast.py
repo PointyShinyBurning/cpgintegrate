@@ -27,12 +27,12 @@ def to_frame(file):
             for l in [re.split("[\[\]]", l) for l in file if l.startswith("Stiffness")]:
                 sheet[l[0] + "(" + l[2].strip() + ")"] = l[1]
 
-            data = pandas.DataFrame()
-            for l in [re.split("[\[\]]", l)
-                      for l in file if not (l.startswith("Stiffness")) and ('[' in l) and 'kPa' in l]:
-                data = data.append({"measNum": int(l[0][-3:-1]), "value (%s)" % l[2].strip(): l[1]}, ignore_index=True)
-
             temp_txt.close()
+
+            # Correct m/s to kPa
+            if sheet.columns[0].endswith("(m / s)"):
+                sheet = (sheet.apply(pandas.to_numeric).transform(lambda x: x**2 * 3)
+                         .rename(columns=lambda col: col.replace("m / s", "kPa")))
     else:
         excel_file = pandas.ExcelFile(file)
 
@@ -42,12 +42,8 @@ def to_frame(file):
 
         if meas.columns[0].upper() == 'KPA':
             sheet.columns = ["val", "var"]
-            data = pandas.DataFrame()
         else:
             sheet.columns = ["var", "val"]
-            head = meas.columns[0]
-
-            data = pandas.DataFrame({"value (kPa)": [head]})
 
         sheet.dropna(inplace=True, how="all")
         sheet['id'] = 1
@@ -59,11 +55,6 @@ def to_frame(file):
         meas.dropna(inplace=True, how="all")
 
         meas.columns = ['value (kPa)', 'measNum']
-        data = data.append(meas)
-
-        data['value (kPa)'].replace([' ', '(?i)kpa'], '', inplace=True, regex=True)
-
-        data.measNum = range(1, len(data) + 1)
 
         sheet.rename(columns={"Median": "Stiffness Med (kPa)",
                               "SD": "Stiffness Std (kPa)",
