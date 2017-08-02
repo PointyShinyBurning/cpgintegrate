@@ -19,7 +19,7 @@ def to_frame(file):
             temp_file.write(file.read())
             temp_file.close()
 
-            os.system("pdftotext -raw %s" % temp_file.name)
+            os.system("pdftotext -raw -enc UTF-8 %s" % temp_file.name)
 
             temp_txt = open(os.path.join(temp_dir, "temp.txt"), "r")
             file = temp_txt.read().splitlines()
