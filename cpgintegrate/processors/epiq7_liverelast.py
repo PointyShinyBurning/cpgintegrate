@@ -46,7 +46,7 @@ def to_frame(file):
             sheet.columns = ["var", "val"]
 
         sheet.dropna(inplace=True, how="all")
-        sheet['id'] = 1
+        sheet.loc[:, 'id'] = 1
 
         sheet.replace('(?i)kpa', '', inplace=True, regex=True)
 
