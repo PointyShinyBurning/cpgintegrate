@@ -21,7 +21,7 @@ def to_frame(file):
 
             os.system("pdftotext -raw -enc UTF-8 %s" % temp_file.name)
 
-            temp_txt = open(os.path.join(temp_dir, "temp.txt"), "r")
+            temp_txt = open(os.path.join(temp_dir, "temp.txt"), "r", encoding='utf-8')
             file = temp_txt.read().splitlines()
             sheet = pandas.DataFrame({"SubjectID": [file[2].split(":")[1].split(" ")[0]]}).set_index("SubjectID")
             for l in [re.split("[\[\]]", l) for l in file if l.startswith("Stiffness")]:
