@@ -7,11 +7,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor: typing.C
 
     def get_frames():
         for file in file_iterator:
-            try:
-                df = processor(file)
-            except Exception:
-                df = pandas.DataFrame({"error": [traceback.format_exc()]})
-
+            df = processor(file)
             yield (df
                    .assign(Source=getattr(file, 'name', None),
                            SubjectID=getattr(file, 'cpgintegrate_subject_id', None),
