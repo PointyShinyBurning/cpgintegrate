@@ -38,7 +38,7 @@ def to_frame(file):
 
         meas = excel_file.parse()
         first_blank = meas[pandas.isnull(meas.ix[:, 0])].index[0]
-        sheet = meas.iloc[first_blank:]
+        sheet = meas.iloc[first_blank:].copy()
 
         if meas.columns[0].upper() == 'KPA':
             sheet.columns = ["val", "var"]
