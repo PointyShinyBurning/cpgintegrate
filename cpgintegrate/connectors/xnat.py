@@ -2,16 +2,19 @@ import requests
 import pandas
 import pandas.io.json
 import typing
+from .connector import Connector
 
 
-class XNAT:
+class XNAT(Connector):
+
     def __init__(self, xnat_url: str, project_id: str, auth: (str, str)):
+        super().__init__()
         self.base_url = xnat_url
         self.project_id = project_id
         self.session = requests.session()
         self.auth = auth
 
-    def get_experiments(self) -> pandas.DataFrame:
+    def get_dataset(self) -> pandas.DataFrame:
         url = "/data/archive/projects/" + self.project_id + "/experiments"
 
         payload = {'guiStyle': 'true',
@@ -25,10 +28,10 @@ class XNAT:
     def iter_files(self, experiment_selector=lambda x: True,
                    scan_selector=lambda x: True,
                    image_selector=lambda x: True) -> typing.Iterator[typing.IO]:
-        experiments = self.get_experiments()
+        experiments = self.get_dataset()
         for subject_id, experiment in experiments[experiments.apply(experiment_selector, axis=1)].iterrows():
             scan_list = self._get_result_set(experiment.URI + "/scans")
-            for _, scan in scan_list[scan_list.apply(scan_selector, axis=1)].iterrows():
+            for __, scan in scan_list[scan_list.apply(scan_selector, axis=1)].iterrows():
                 files = self._get_result_set(scan.URI+'/files')
                 for _, file in files[files.apply(image_selector, axis=1)].iterrows():
                     file_url = self.base_url + file.URI
