@@ -18,7 +18,8 @@ def to_frame(file):
     temp_file.close()
 
     item_repeats = {}
-    xml = etree.fromstring(subprocess.check_output('dsr2xml -Ee +Ea +Wt -q +U8 "%s"' % temp_file.name, shell=True))
+    xml = etree.fromstring(subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name, shell=True,
+                                                   encoding='utf-8', errors='replace').encode("utf-8"))
     f = pandas.DataFrame({"SubjectID": [xml.findtext('./patient/id')]})
     f = pandas.concat([f, pandas.DataFrame(
         {prefix + '_' + l.tag: l.text
