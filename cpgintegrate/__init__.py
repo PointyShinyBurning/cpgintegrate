@@ -9,7 +9,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor) -> panda
             source = getattr(file, 'name', None)
             subject_id = getattr(file, 'cpgintegrate_subject_id', None)
             try:
-                if isinstance(processor, callable):
+                if callable(processor):
                     df = processor(file)
                 else:
                     df = processor.to_frame(file)
