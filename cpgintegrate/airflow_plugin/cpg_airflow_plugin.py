@@ -50,7 +50,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
         self.processor = processor
         self.processor_args = processor_args or []
         self.processor_kwargs = processor_kwargs or {}
-        self.filter_cols = {"items": filter_cols} or {"regex": ".*"}
+        self.filter_cols = {"items": filter_cols} if filter_cols else {"regex": ".*"}
 
     def _get_dataframe(self):
         connector_instance = self._get_connector()
