@@ -7,7 +7,7 @@ from .connector import Connector
 
 class OpenClinica(Connector):
 
-    def __init__(self, openclinica_url: str, study_oid: str, xml_path: str = None, auth: (str, str) = None):
+    def __init__(self, openclinica_url: str, study_oid: str, auth: (str, str) = None, xml_path: str = None):
         super().__init__()
         self.base_url = openclinica_url
         self.study_oid = study_oid

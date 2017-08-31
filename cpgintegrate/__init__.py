@@ -2,14 +2,17 @@ import pandas
 import typing
 
 
-def process_files(file_iterator: typing.Iterator[typing.IO], processor: typing.Callable) -> pandas.DataFrame:
+def process_files(file_iterator: typing.Iterator[typing.IO], processor) -> pandas.DataFrame:
 
     def get_frames():
         for file in file_iterator:
             source = getattr(file, 'name', None)
             subject_id = getattr(file, 'cpgintegrate_subject_id', None)
             try:
-                df = processor(file)
+                if isinstance(processor, callable):
+                    df = processor(file)
+                else:
+                    df = processor.to_frame(file)
             except Exception as e:
                 raise ProcessingException({"Source": source, 'SubjectID': subject_id}) from e
             yield (df
