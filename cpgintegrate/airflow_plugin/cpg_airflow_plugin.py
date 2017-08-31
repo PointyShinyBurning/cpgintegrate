@@ -50,7 +50,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
         self.processor = processor
         self.processor_args = processor_args or []
         self.processor_kwargs = processor_kwargs or {}
-        self.filter_cols = {"items": filter_cols} if filter_cols else {"regex": ".*"}
+        self.column_filter = {"items": filter_cols} if filter_cols else {"regex": ".*"}
 
     def _get_dataframe(self):
         connector_instance = self._get_connector()
@@ -59,7 +59,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
                                processor_instance)
-                .filter(axis='columns', **self.filter_cols))
+                .filter(axis='columns', **self.column_filter))
 
 
 class AirflowCPGPlugin(AirflowPlugin):
