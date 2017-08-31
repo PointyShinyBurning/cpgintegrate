@@ -9,6 +9,8 @@ import pandas
 
 
 class CPGDatasetToCsv(BaseOperator):
+    ui_color = '#7DF9FF'
+
     @apply_defaults
     def __init__(self, connector_class, connection_id, connector_args, csv_dir,
                  connector_kwargs=None, dataset_args=None, dataset_kwargs=None, *args, **kwargs):
@@ -41,6 +43,8 @@ class CPGDatasetToCsv(BaseOperator):
 
 
 class CPGProcessorToCsv(CPGDatasetToCsv):
+    ui_color = '#E7FEFF'
+
     @apply_defaults
     def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None,
                  processor_args=None, processor_kwargs=None, filter_cols=None, *args, **kwargs):
