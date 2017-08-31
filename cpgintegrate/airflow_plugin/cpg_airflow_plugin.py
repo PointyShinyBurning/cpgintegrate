@@ -18,7 +18,7 @@ class CPGDatasetToCsv(BaseOperator):
         self.connector_kwargs = connector_kwargs or {}
         self.dataset_args = dataset_args or []
         self.dataset_kwargs = dataset_kwargs or {}
-        self.csv_path = os.path.join(self.csv_dir, self.task_id + ".csv")
+        self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
 
     def _get_connector(self):
         conn = BaseHook.get_conn(self.connection_id)
@@ -58,6 +58,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
                                processor_instance)
                 .filter(axis='columns', **self.filter_cols))
+
 
 class AirflowCPGPlugin(AirflowPlugin):
     name = "cpg_plugin"
