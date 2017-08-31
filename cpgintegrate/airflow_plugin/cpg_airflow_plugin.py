@@ -5,6 +5,7 @@ from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import os
 import logging
+import pandas
 
 
 class CPGDatasetToCsv(BaseOperator):
@@ -30,7 +31,8 @@ class CPGDatasetToCsv(BaseOperator):
 
     def execute(self, context):
         out_frame = self._get_dataframe()
-        if not (context['ti'].xcom_pull(self.task_id, include_prior_dates=True).equals(out_frame)):
+        old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True) or pandas.DataFrame()
+        if not old_frame.equals(out_frame):
             logging.info("Dataset changed from last run, outputting csv")
             out_frame.to_csv(self.csv_path)
         else:
