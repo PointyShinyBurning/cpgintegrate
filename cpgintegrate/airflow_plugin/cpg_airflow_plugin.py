@@ -21,7 +21,7 @@ class CPGDatasetToCsv(BaseOperator):
         self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
 
     def _get_connector(self):
-        conn = BaseHook.get_conn(self.connection_id)
+        conn = BaseHook.get_connection(self.connection_id)
         return self.connector_class(conn.host, *self.connector_args,
                                     auth=(conn.login, conn.password), **self.connector_kwargs)
 
