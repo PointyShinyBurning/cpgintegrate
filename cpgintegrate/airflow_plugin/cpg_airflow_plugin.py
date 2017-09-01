@@ -33,8 +33,8 @@ class CPGDatasetToCsv(BaseOperator):
 
     def execute(self, context):
         out_frame = self._get_dataframe()
-        old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True) or pandas.DataFrame()
-        if not(old_frame.equals(out_frame)) or not(os.path.exists(self.csv_path)):
+        old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
+        if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
             out_frame.to_csv(self.csv_path)
         else:
