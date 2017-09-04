@@ -13,6 +13,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor) -> panda
                     df = processor(file)
                 else:
                     df = processor.to_frame(file)
+                file.close()
             except Exception as e:
                 raise ProcessingException({"Source": source, 'SubjectID': subject_id}) from e
             yield (df
