@@ -13,7 +13,7 @@ class CPGDatasetToCsv(BaseOperator):
 
     @apply_defaults
     def __init__(self, connector_class, connection_id, connector_args, csv_dir,
-                 connector_kwargs=None, dataset_args=None, dataset_kwargs=None, *args, **kwargs):
+                 connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
         self.connection_id = connection_id
@@ -22,6 +22,7 @@ class CPGDatasetToCsv(BaseOperator):
         self.dataset_args = dataset_args or []
         self.dataset_kwargs = dataset_kwargs or {}
         self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
+        self.post_processor = post_processor or (lambda x: x)
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
@@ -32,7 +33,7 @@ class CPGDatasetToCsv(BaseOperator):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)
 
     def execute(self, context):
-        out_frame = self._get_dataframe()
+        out_frame = self.post_processor(self._get_dataframe())
         old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
