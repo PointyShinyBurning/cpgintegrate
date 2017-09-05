@@ -24,7 +24,7 @@ class CPGDatasetToCsv(BaseOperator):
         self.dataset_kwargs = dataset_kwargs or {}
         self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
         self.post_processor = post_processor or (lambda x: x)
-        self.column_filter = {"items": filter_cols} if filter_cols else {"regex": ".*"}
+        self.column_filter = {"items": filter_cols + ['Source']} if filter_cols else {"regex": ".*"}
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
