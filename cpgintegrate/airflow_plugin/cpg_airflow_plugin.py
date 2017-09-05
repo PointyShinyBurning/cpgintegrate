@@ -13,7 +13,8 @@ class CPGDatasetToCsv(BaseOperator):
 
     @apply_defaults
     def __init__(self, connector_class, connection_id, connector_args, csv_dir,
-                 connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, *args, **kwargs):
+                 connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, filter_cols=None,
+                 *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
         self.connection_id = connection_id
@@ -23,6 +24,7 @@ class CPGDatasetToCsv(BaseOperator):
         self.dataset_kwargs = dataset_kwargs or {}
         self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
         self.post_processor = post_processor or (lambda x: x)
+        self.column_filter = {"items": filter_cols} if filter_cols else {"regex": ".*"}
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
@@ -33,7 +35,7 @@ class CPGDatasetToCsv(BaseOperator):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)
 
     def execute(self, context):
-        out_frame = self.post_processor(self._get_dataframe())
+        out_frame = self.post_processor(self._get_dataframe().filter(axis='columns', **self.column_filter))
         old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
@@ -48,14 +50,13 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
 
     @apply_defaults
     def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None,
-                 processor_args=None, processor_kwargs=None, filter_cols=None, *args, **kwargs):
+                 processor_args=None, processor_kwargs=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.iter_files_args = iter_files_args or []
         self.iter_files_kwargs = iter_files_kwargs or {}
         self.processor = processor
         self.processor_args = processor_args or []
         self.processor_kwargs = processor_kwargs or {}
-        self.column_filter = {"items": filter_cols} if filter_cols else {"regex": ".*"}
 
     def _get_dataframe(self):
         connector_instance = self._get_connector()
@@ -63,8 +64,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
             if isinstance(self.processor, type) else self.processor
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
-                               processor_instance)
-                .filter(axis='columns', **self.column_filter))
+                               processor_instance))
 
 
 class AirflowCPGPlugin(AirflowPlugin):
