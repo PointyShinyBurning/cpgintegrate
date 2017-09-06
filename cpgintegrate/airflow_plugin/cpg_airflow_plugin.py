@@ -10,11 +10,12 @@ import pandas
 
 class CPGDatasetToCsv(BaseOperator):
     ui_color = '#7DF9FF'
-    cols_always_present = ['Source', 'FileSubjectID']
+    cols_always_present = ['Source']
 
     @apply_defaults
     def __init__(self, connector_class, connection_id, connector_args, csv_dir,
                  connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, filter_cols=None,
+                 file_subject_id=False,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
@@ -25,7 +26,8 @@ class CPGDatasetToCsv(BaseOperator):
         self.dataset_kwargs = dataset_kwargs or {}
         self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
         self.post_processor = post_processor or (lambda x: x)
-        self.column_filter = {"items": filter_cols + CPGDatasetToCsv.cols_always_present} if filter_cols else {"regex": ".*"}
+        self.column_filter = {"items": filter_cols + CPGDatasetToCsv.cols_always_present
+                              + ['FileSubjectID'] if file_subject_id else []} if filter_cols else {"regex": ".*"}
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
