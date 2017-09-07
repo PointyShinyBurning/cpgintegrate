@@ -67,7 +67,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
                                processor_instance)
-                .drop([] if self.file_subject_id else ["FileSubjectID"]))
+                .drop([] if self.file_subject_id else ["FileSubjectID"], axis=1))
 
 
 class AirflowCPGPlugin(AirflowPlugin):
