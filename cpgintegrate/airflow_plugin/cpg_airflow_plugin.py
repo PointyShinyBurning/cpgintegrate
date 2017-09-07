@@ -5,7 +5,6 @@ from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import os
 import logging
-import pandas
 
 
 class CPGDatasetToCsv(BaseOperator):
@@ -15,7 +14,6 @@ class CPGDatasetToCsv(BaseOperator):
     @apply_defaults
     def __init__(self, connector_class, connection_id, connector_args, csv_dir,
                  connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, filter_cols=None,
-                 file_subject_id=False,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
@@ -26,8 +24,8 @@ class CPGDatasetToCsv(BaseOperator):
         self.dataset_kwargs = dataset_kwargs or {}
         self.csv_path = os.path.join(csv_dir, self.task_id + ".csv")
         self.post_processor = post_processor or (lambda x: x)
-        self.filter_cols = filter_cols
-        self.file_subject_id = file_subject_id
+        self.column_filter = {"items": filter_cols + CPGDatasetToCsv.cols_always_present} if filter_cols else {
+            "regex": ".*"}
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
@@ -38,11 +36,7 @@ class CPGDatasetToCsv(BaseOperator):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)
 
     def execute(self, context):
-        frame = self._get_dataframe()
-        cols_to_keep = (self.filter_cols + CPGDatasetToCsv.cols_always_present)\
-            if self.filter_cols \
-            else (frame.columns if self.file_subject_id else frame.columns.remove("FileSubjectID"))
-        out_frame = self.post_processor(frame.loc[:, cols_to_keep])
+        out_frame = self.post_processor(self._get_dataframe().filter(**self.column_filter))
         old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
@@ -57,13 +51,14 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
 
     @apply_defaults
     def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None,
-                 processor_args=None, processor_kwargs=None, *args, **kwargs):
+                 processor_args=None, processor_kwargs=None, file_subject_id=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.iter_files_args = iter_files_args or []
         self.iter_files_kwargs = iter_files_kwargs or {}
         self.processor = processor
         self.processor_args = processor_args or []
         self.processor_kwargs = processor_kwargs or {}
+        self.file_subject_id = file_subject_id
 
     def _get_dataframe(self):
         connector_instance = self._get_connector()
@@ -71,7 +66,8 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
             if isinstance(self.processor, type) else self.processor
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
-                               processor_instance))
+                               processor_instance)
+                .drop([] if self.file_subject_id else ["FileSubjectID"]))
 
 
 class AirflowCPGPlugin(AirflowPlugin):
