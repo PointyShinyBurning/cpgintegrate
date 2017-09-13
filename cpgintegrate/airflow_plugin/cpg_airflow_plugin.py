@@ -71,7 +71,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
             if isinstance(self.processor, type) else self.processor
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
-                               processor_instance, cache=Walrus().Hash(self.cache_name) if self.cache else None)
+                               processor_instance, cache=Walrus().Hash(self.cache_name) if self.cache_name else None)
                 .drop([] if self.file_subject_id else ["FileSubjectID"], axis=1))
 
 
