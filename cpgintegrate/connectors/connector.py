@@ -16,4 +16,3 @@ class Connector(ABC):
 
     def process_files(self, processor, *args, **kwargs):
         return cpgintegrate.process_files(self.iter_files(*args, **kwargs), processor)
-

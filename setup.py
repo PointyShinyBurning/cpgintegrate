@@ -10,5 +10,6 @@ setup(
         'lxml>=3',
         'pandas>=0.18.1',
         'xlrd',
+        'walrus',
     ]
 )

@@ -5,7 +5,7 @@ from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import os
 import logging
-
+from walrus import Walrus
 
 class CPGDatasetToCsv(BaseOperator):
     ui_color = '#7DF9FF'
@@ -54,7 +54,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
     ui_color = '#E7FEFF'
 
     @apply_defaults
-    def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None,
+    def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None, cache_name=None,
                  processor_args=None, processor_kwargs=None, file_subject_id=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.iter_files_args = iter_files_args or []
@@ -63,6 +63,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
         self.processor_args = processor_args or []
         self.processor_kwargs = processor_kwargs or {}
         self.file_subject_id = file_subject_id
+        self.cache_name = cache_name
 
     def _get_dataframe(self):
         connector_instance = self._get_connector()
@@ -70,7 +71,7 @@ class CPGProcessorToCsv(CPGDatasetToCsv):
             if isinstance(self.processor, type) else self.processor
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
-                               processor_instance)
+                               processor_instance, cache=Walrus().Hash(self.cache_name) if self.cache else None)
                 .drop([] if self.file_subject_id else ["FileSubjectID"], axis=1))
 
 

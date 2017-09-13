@@ -3,6 +3,7 @@ import pandas
 import pandas.io.json
 import typing
 from .connector import Connector
+import cpgintegrate
 
 
 class XNAT(Connector):
@@ -33,11 +34,12 @@ class XNAT(Connector):
             scan_list = self._get_result_set(experiment.URI + "/scans")
             for __, scan in scan_list[scan_list.apply(scan_selector, axis=1)].iterrows():
                 files = self._get_result_set(scan.URI+'/files')
-                for _, file in files[files.apply(image_selector, axis=1)].iterrows():
-                    file_url = self.base_url + file.URI
+                for _, file_elem in files[files.apply(image_selector, axis=1)].iterrows():
+                    file_url = self.base_url + file_elem.URI
                     file = self.session.get(file_url, auth=self.auth, stream=True).raw
                     file.name = file_url
-                    file.cpgintegrate_subject_id = subject_id
+                    setattr(file, cpgintegrate.SUBJECT_ID_ATTR, subject_id)
+                    setattr(file, cpgintegrate.CACHE_KEY_ATTR, file.headers['Last-Modified'])
                     yield file
 
     def _get_result_set(self, url, params=None):

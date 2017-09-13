@@ -3,6 +3,7 @@ from lxml import etree
 import pandas as pd
 import typing
 from .connector import Connector
+import cpgintegrate
 
 
 class OpenClinica(Connector):
@@ -40,9 +41,9 @@ class OpenClinica(Connector):
             file_like = resp.raw
             file_like.decode_content = True
             file_like.name = resp.url
-            file_like.cpgintegrate_subject_id = \
-                item.xpath("ancestor::default:SubjectData", namespaces=self.nsmap)[0]\
-                    .get("{%s}StudySubjectID" % self.nsmap["OpenClinica"])
+            setattr(file_like, cpgintegrate.SUBJECT_ID_ATTR,
+                    item.xpath("ancestor::default:SubjectData", namespaces=self.nsmap)[0]
+                    .get("{%s}StudySubjectID" % self.nsmap["OpenClinica"]))
             yield file_like
 
     def get_dataset(self, form_oid_prefix: str = "") -> pd.DataFrame:
