@@ -20,7 +20,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor, cache: t
             cache_key = (source, processing_func_hash, getattr(file, CACHE_KEY_ATTR, None))
             try:
                 try:
-                    assert source
+                    assert source and cache is not None
                     df = pandas.read_msgpack(cache[cache_key])
                     logging.debug("Cache hit for %s", source)
                 except (KeyError, AssertionError):
