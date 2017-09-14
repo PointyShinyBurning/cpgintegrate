@@ -7,6 +7,7 @@ import os
 import logging
 from walrus import Walrus
 
+
 class CPGDatasetToCsv(BaseOperator):
     ui_color = '#7DF9FF'
     cols_always_present = ['Source']
@@ -14,6 +15,7 @@ class CPGDatasetToCsv(BaseOperator):
     @apply_defaults
     def __init__(self, connector_class, connection_id, connector_args, csv_dir, row_filter=lambda row: True,
                  connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, filter_cols=None,
+                 drop_na_cols=True,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
@@ -31,6 +33,7 @@ class CPGDatasetToCsv(BaseOperator):
         else:
             self.column_filter = {"regex": ".*"}
         self.row_filter = row_filter
+        self.drop_na_cols = drop_na_cols
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
@@ -44,6 +47,8 @@ class CPGDatasetToCsv(BaseOperator):
         out_frame = self.post_processor(self._get_dataframe()
                                         .filter(**self.column_filter)
                                         .loc[lambda df: df.apply(self.row_filter, axis=1)])
+        if self.drop_na_cols:
+            out_frame.dropna(axis=1, how='all', inplace=True)
         old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
