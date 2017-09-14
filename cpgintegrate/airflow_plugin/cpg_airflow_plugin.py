@@ -12,7 +12,7 @@ class CPGDatasetToCsv(BaseOperator):
     cols_always_present = ['Source']
 
     @apply_defaults
-    def __init__(self, connector_class, connection_id, connector_args, csv_dir,
+    def __init__(self, connector_class, connection_id, connector_args, csv_dir, row_filter=lambda row: True,
                  connector_kwargs=None, dataset_args=None, dataset_kwargs=None, post_processor=None, filter_cols=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,6 +30,7 @@ class CPGDatasetToCsv(BaseOperator):
             self.column_filter = {"regex": str}
         else:
             self.column_filter = {"regex": ".*"}
+        self.row_filter = row_filter
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
@@ -40,7 +41,9 @@ class CPGDatasetToCsv(BaseOperator):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)
 
     def execute(self, context):
-        out_frame = self.post_processor(self._get_dataframe().filter(**self.column_filter))
+        out_frame = self.post_processor(self._get_dataframe()
+                                        .filter(**self.column_filter)
+                                        .loc[lambda df: df.apply(self.row_filter, axis=1)])
         old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
