@@ -40,7 +40,7 @@ def to_frame(file):
             for x in suffixes:
                 identifier += "_" + x.text
 
-            if len(unit):
+            if len(unit) and unit[0].text != 'no units':
                 identifier = identifier + "(" + unit[0].text + ")"
 
             if identifier in item_repeats:
