@@ -31,7 +31,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor, cache: t
             yield (df
                    .assign(Source=source, SubjectID=subject_id, FileSubjectID=df.index if df.index.name else None))
 
-    return pandas.DataFrame(pandas.concat((frame for frame in get_frames()))).set_index("SubjectID")
+    return pandas.concat((frame for frame in get_frames())).set_index("SubjectID")
 
 
 class ProcessingException(Exception):
