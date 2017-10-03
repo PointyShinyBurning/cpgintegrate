@@ -4,7 +4,7 @@ import pandas as pd
 import typing
 from .connector import Connector
 import cpgintegrate
-
+from cpgintegrate import ColumnInfoFrame
 
 class OpenClinica(Connector):
 
@@ -59,6 +59,7 @@ class OpenClinica(Connector):
                 return {
                     '%s:%s' % (etree.QName(xml_item.tag).localname, etree.QName(attrib).localname): value
                     for attrib, value in xml_item.attrib.items()}
+
             return dict(
                 **attribute_dictize(form.find('../..')),
                 **attribute_dictize(form.find('..')),
@@ -66,13 +67,32 @@ class OpenClinica(Connector):
                 **{k: v for item_group in form.xpath('./default:ItemGroupData', namespaces=self.nsmap)
                    for k, v in item_group_listize(item_group)})
 
+        def get_item_info(item_oid):
+            item_info = {"description":
+                             self.xml.xpath(".//default:ItemDef[@OID='%s']" % item_oid, namespaces=self.nsmap)
+                             [0].attrib.get("Comment")}
+            measurement_units = self.xml.xpath(".//default:ItemDef[@OID='%s']//default:MeasurementUnitRef"
+                                               % item_oid, namespaces=self.nsmap)
+            if len(measurement_units):
+                item_info['label'] = self.xml.xpath(".//default:MeasurementUnit[@OID='%s']"
+                                                    % measurement_units[0].attrib.get("MeasurementUnitOID"),
+                                                    namespaces=self.nsmap)[0].attrib.get("Name")
+            return item_info
+
         forms = self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and @OpenClinica:Status != 'invalid']"
                                % form_oid_prefix, namespaces=self.nsmap)
 
+        item_oids = {item.attrib.get('ItemOID') for item
+                     in self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and"
+                                       " @OpenClinica:Status != 'invalid']//default:ItemData"
+                                       % form_oid_prefix, namespaces=self.nsmap)}
+
+        column_info = {item_oid: get_item_info(item_oid) for item_oid in item_oids}
+
         return (
-            pd.DataFrame((form_to_dict(form) for form in forms)).
-            set_index('SubjectData:StudySubjectID', drop=True).
-            assign(
+            ColumnInfoFrame((form_to_dict(form) for form in forms), column_info=column_info)
+            .set_index('SubjectData:StudySubjectID', drop=True)
+            .assign(
                 Source=lambda frame:
                 self.base_url + '/rest/clinicaldata/html/print/' + self.study_oid + '/'
                 + frame['SubjectData:SubjectKey'].str.cat([

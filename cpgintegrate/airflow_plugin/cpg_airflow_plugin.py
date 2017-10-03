@@ -53,6 +53,8 @@ class CPGDatasetToCsv(BaseOperator):
         if not(out_frame.equals(old_frame)) or not(os.path.exists(self.csv_path)):
             logging.info("Dataset changed from last run, outputting csv")
             out_frame.to_csv(self.csv_path)
+            if hasattr(out_frame, 'save_json_column_info'):
+                out_frame.save_json_column_info(self.csv_path.split(".")[0]+".json")
         else:
             logging.info("Dataset same as last run, leaving csv alone")
         return out_frame

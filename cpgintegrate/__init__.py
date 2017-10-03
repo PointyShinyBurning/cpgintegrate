@@ -2,6 +2,7 @@ import pandas
 import typing
 import inspect
 import hashlib
+from .column_info_frame import ColumnInfoFrame
 
 SUBJECT_ID_ATTR = 'cpgintegrate_subject_id'
 CACHE_KEY_ATTR = 'cpgintegrate_hash_key'
