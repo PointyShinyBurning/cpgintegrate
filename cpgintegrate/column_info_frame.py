@@ -6,7 +6,7 @@ class ColumnInfoFrame(DataFrame):
     """
     Adds arbitrary dict of column metadata and a method to output it to ckan-datastore compliant JSON field list
 
-    NOT FOR GENERAL USE, only parts I've used in this package have any likelihood of working properly
+    LIKELY BAD FOR GENERAL USE, only parts I've used in this package have been looked at to see if they work properly
     """
 
     _metadata = ['column_info']
@@ -33,7 +33,7 @@ class ColumnInfoFrame(DataFrame):
 
     def get_json_column_info(self):
         return json.dumps([
-            {"id": col_name, "info": self.column_info.get(col_name, {})}
+            {**{"id": col_name}, **({"info": self.column_info[col_name]} if col_name in self.column_info else {})}
             for col_name in [self.index.name or ""]+list(self.columns)
         ])
 
