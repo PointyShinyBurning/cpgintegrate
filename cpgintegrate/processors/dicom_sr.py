@@ -3,7 +3,7 @@ import subprocess
 import os
 import tempfile
 from lxml import etree
-
+from cpgintegrate import ColumnInfoFrame
 
 def to_frame(file):
     """Turns DICOM structured reports into dataframes.
@@ -20,8 +20,8 @@ def to_frame(file):
     item_repeats = {}
     xml = etree.fromstring(subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name, shell=True,
                                                    encoding='utf-8', errors='replace').encode("utf-8"))
-    f = pandas.DataFrame({"SubjectID": [xml.findtext('./patient/id')]})
-    f = pandas.concat([f, pandas.DataFrame(
+    f = ColumnInfoFrame({"SubjectID": [xml.findtext('./patient/id')]})
+    f = pandas.concat([f, ColumnInfoFrame(
         {prefix + '_' + l.tag: l.text
          for prefix in ['study', 'series'] for l in xml.find('./' + prefix)}, index=[0])],
                       axis=1)
@@ -40,14 +40,14 @@ def to_frame(file):
             for x in suffixes:
                 identifier += "_" + x.text
 
-            if len(unit) and unit[0].text != 'no units':
-                identifier = identifier + "(" + unit[0].text + ")"
-
             if identifier in item_repeats:
                 item_repeats[identifier] += 1
                 identifier = identifier + "_" + str(item_repeats[identifier])
             else:
                 item_repeats[identifier] = 0
+
+            if len(unit) and unit[0].text != 'no units':
+                f.column_info[identifier] = {"label":unit[0].text}
 
             f[identifier] = value
 

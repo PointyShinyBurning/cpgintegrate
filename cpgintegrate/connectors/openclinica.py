@@ -6,6 +6,7 @@ from .connector import Connector
 import cpgintegrate
 from cpgintegrate import ColumnInfoFrame
 
+
 class OpenClinica(Connector):
 
     def __init__(self, openclinica_url: str, study_oid: str, auth: (str, str) = None, xml_path: str = None):
