@@ -39,4 +39,4 @@ class ColumnInfoFrame(DataFrame):
 
     def save_json_column_info(self, file_path):
         with open(file_path, 'w') as out_file:
-            out_file.write(self.get_json)
+            out_file.write(self.get_json_column_info())
