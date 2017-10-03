@@ -68,7 +68,7 @@ class OpenClinica(Connector):
                    for k, v in item_group_listize(item_group)})
 
         def get_item_info(item_oid):
-            item_info = {"description":
+            item_info = {"notes":
                              self.xml.xpath(".//default:ItemDef[@OID='%s']" % item_oid, namespaces=self.nsmap)
                              [0].attrib.get("Comment")}
             measurement_units = self.xml.xpath(".//default:ItemDef[@OID='%s']//default:MeasurementUnitRef"
