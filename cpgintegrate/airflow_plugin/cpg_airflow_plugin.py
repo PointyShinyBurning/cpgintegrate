@@ -135,8 +135,9 @@ class XComDatasetProcess(CPGCachingOperator):
     cols_always_present = [cpgintegrate.TIMESTAMP_FIELD_NAME, cpgintegrate.SOURCE_FIELD_NAME]
 
     @apply_defaults
-    def __init(self, source_task_id, post_processor=None, filter_cols=None, drop_na_cols=True,
+    def __init__(self, source_task_id, post_processor=None, filter_cols=None, drop_na_cols=True,
                row_filter=lambda row: True, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.source_task_id = source_task_id
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
