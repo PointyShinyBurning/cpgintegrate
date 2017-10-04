@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
@@ -55,7 +57,24 @@ class XComDatasetToCkan(BaseOperator):
             assert datadict_res.status_code == 200
 
 
-class CPGDatasetToXCom(BaseOperator):
+class CPGCachingOperator(BaseOperator):
+
+    @abstractmethod
+    def _get_dataframe(self, context):
+        pass
+
+    def execute(self, context):
+        out_frame = self._get_dataframe(context)
+        old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True) \
+                    or pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
+        if not (out_frame
+                        .drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)
+                        .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1))):
+            return out_frame
+        return old_frame
+
+
+class CPGDatasetToXCom(CPGCachingOperator):
     ui_color = '#7DF9FF'
 
     @apply_defaults
@@ -112,7 +131,7 @@ class CPGProcessorToXCom(CPGDatasetToXCom):
                 .drop([] if self.file_subject_id else ["FileSubjectID"], axis=1))
 
 
-class XComDatasetProcess(CPGDatasetToXCom):
+class XComDatasetProcess(CPGCachingOperator):
     cols_always_present = [cpgintegrate.TIMESTAMP_FIELD_NAME, cpgintegrate.SOURCE_FIELD_NAME]
 
     @apply_defaults
