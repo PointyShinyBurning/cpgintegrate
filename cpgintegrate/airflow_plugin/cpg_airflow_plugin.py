@@ -137,6 +137,7 @@ class XComDatasetProcess(CPGCachingOperator):
     @apply_defaults
     def __init(self, source_task_id, post_processor=None, filter_cols=None, drop_na_cols=True,
                row_filter=lambda row: True, *args, **kwargs):
+        self.source_task_id = source_task_id
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
             self.column_filter = {"items": filter_cols+self.cols_always_present}
