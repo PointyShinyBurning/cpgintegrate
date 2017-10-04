@@ -22,7 +22,7 @@ class XComDatasetToCkan(BaseOperator):
     def execute(self, context):
         conn = BaseHook.get_connection(self.ckan_connection_id)
 
-        push_frame = context['ti'].xcom_pull(self.source_task_id) or pandas.DataFrame()
+        push_frame = context['ti'].xcom_pull(self.source_task_id)
         existing_resource_list = requests.get(
             url=conn.host + '/api/3/action/package_show',
             headers={"Authorization": conn.get_password()},
