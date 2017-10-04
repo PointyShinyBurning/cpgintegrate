@@ -69,11 +69,11 @@ class CPGCachingOperator(BaseOperator):
         xcom_pull = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         old_frame = xcom_pull if xcom_pull is not None \
             else pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
-        if cpgintegrate.TIMESTAMP_FIELD_NAME not in old_frame.columns \
-                or out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
+        if cpgintegrate.TIMESTAMP_FIELD_NAME in old_frame.columns \
+                and out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
                 .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
-            return out_frame
-        return old_frame
+            return old_frame
+        return out_frame
 
 
 class CPGDatasetToXCom(CPGCachingOperator):
