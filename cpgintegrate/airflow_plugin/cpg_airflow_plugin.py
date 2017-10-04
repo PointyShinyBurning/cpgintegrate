@@ -150,8 +150,7 @@ class XComDatasetProcess(CPGCachingOperator):
         self.drop_na_cols = drop_na_cols
 
     def _get_dataframe(self, context):
-        out_frame = self.post_processor((context['ti'].xcom_pull(self.source_task_id, include_prior_dates=True) or
-                                         pandas.DataFrame())
+        out_frame = self.post_processor(context['ti'].xcom_pull(self.source_task_id)
                                         .filter(**self.column_filter)
                                         .loc[lambda df: df.apply(self.row_filter, axis=1)])
         if self.drop_na_cols:
