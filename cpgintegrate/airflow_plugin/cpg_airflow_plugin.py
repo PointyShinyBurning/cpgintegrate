@@ -13,7 +13,8 @@ import pandas
 class XComDatasetToCkan(BaseOperator):
 
     @apply_defaults
-    def __init(self, source_task_id, ckan_connection_id, ckan_package_id):
+    def __init__(self, source_task_id, ckan_connection_id, ckan_package_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.source_task_id = source_task_id
         self.ckan_connection_id = ckan_connection_id
         self.ckan_package_id = ckan_package_id
@@ -101,9 +102,8 @@ class CPGDatasetToXCom(CPGCachingOperator):
         xcom_pull = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
         old_frame = xcom_pull if xcom_pull is not None \
             else pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
-        if not (out_frame
-                        .drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)
-                        .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1))):
+        if not out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
+                .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
             return out_frame
         return old_frame
 
