@@ -20,7 +20,7 @@ class XComDatasetToCkan(BaseOperator):
         self.ckan_package_id = ckan_package_id
 
     def execute(self, context):
-        conn = BaseHook.get_connection(self.connection_id)
+        conn = BaseHook.get_connection(self.ckan_connection_id)
 
         push_frame = context['ti'].xcom_pull(self.source_task_id) or pandas.DataFrame()
         existing_resource_list = requests.get(
