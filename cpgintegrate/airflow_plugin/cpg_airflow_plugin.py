@@ -66,11 +66,11 @@ class CPGCachingOperator(BaseOperator):
 
     def execute(self, context):
         out_frame = self._get_dataframe(context)
-        old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True) \
-                    or pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
-        if not (out_frame
-                        .drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)
-                        .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1))):
+        xcom_pull = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
+        old_frame = xcom_pull if xcom_pull is not None \
+            else pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
+        if not out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
+                .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
             return out_frame
         return old_frame
 
@@ -96,16 +96,6 @@ class CPGDatasetToXCom(CPGCachingOperator):
 
     def _get_dataframe(self, context):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)
-
-    def execute(self, context):
-        out_frame = self._get_dataframe(context)
-        xcom_pull = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
-        old_frame = xcom_pull if xcom_pull is not None \
-            else pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
-        if not out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
-                .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
-            return out_frame
-        return old_frame
 
 
 class CPGProcessorToXCom(CPGDatasetToXCom):
