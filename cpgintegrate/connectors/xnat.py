@@ -15,7 +15,7 @@ class XNAT(Connector):
         self.session = requests.session()
         self.auth = auth
 
-    def get_dataset(self) -> pandas.DataFrame:
+    def _read_dataset(self) -> pandas.DataFrame:
         url = "/data/archive/projects/" + self.project_id + "/experiments"
 
         payload = {'guiStyle': 'true',

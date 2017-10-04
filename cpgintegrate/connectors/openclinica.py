@@ -47,7 +47,7 @@ class OpenClinica(Connector):
                     .get("{%s}StudySubjectID" % self.nsmap["OpenClinica"]))
             yield file_like
 
-    def get_dataset(self, form_oid_prefix: str = "") -> pd.DataFrame:
+    def _read_dataset(self, form_oid_prefix: str = "") -> pd.DataFrame:
 
         def form_to_dict(form):
             def item_group_listize(item_group):
