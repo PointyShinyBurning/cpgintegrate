@@ -69,13 +69,13 @@ class OpenClinica(Connector):
                    for k, v in item_group_listize(item_group)})
 
         def get_item_info(item_oid):
-            item_info = {"notes":
+            item_info = {cpgintegrate.DESCRIPTION_ATTRIBUTE_NAME:
                              self.xml.xpath(".//default:ItemDef[@OID='%s']" % item_oid, namespaces=self.nsmap)
                              [0].attrib.get("Comment")}
             measurement_units = self.xml.xpath(".//default:ItemDef[@OID='%s']//default:MeasurementUnitRef"
                                                % item_oid, namespaces=self.nsmap)
             if len(measurement_units):
-                item_info['label'] = self.xml.xpath(".//default:MeasurementUnit[@OID='%s']"
+                item_info[cpgintegrate.UNITS_ATTRIBUTE_NAME] = self.xml.xpath(".//default:MeasurementUnit[@OID='%s']"
                                                     % measurement_units[0].attrib.get("MeasurementUnitOID"),
                                                     namespaces=self.nsmap)[0].attrib.get("Name")
             return item_info

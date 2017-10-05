@@ -2,7 +2,8 @@ import pandas
 import os
 import re
 import tempfile
-
+from cpgintegrate import ColumnInfoFrame
+import cpgintegrate
 
 def to_frame(file):
     """Turns pdf or excel liver elastography analysis from Philips EPIQ 7 into a DataFrame
@@ -66,4 +67,5 @@ def to_frame(file):
                               },
                      inplace=True)
 
-    return sheet
+    sheet.columns = [col.replace(" (kPa)","") for col in sheet.columns]
+    return ColumnInfoFrame(sheet, column_info={col:{cpgintegrate.UNITS_ATTRIBUTE_NAME:"kPa"} for col in sheet.columns})

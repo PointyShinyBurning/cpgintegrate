@@ -11,6 +11,8 @@ CACHE_KEY_ATTR = 'cpgintegrate_hash_key'
 TIMESTAMP_FIELD_NAME = 'timestamp'
 SOURCE_FIELD_NAME = 'Source'
 
+UNITS_ATTRIBUTE_NAME = 'label'
+DESCRIPTION_ATTRIBUTE_NAME = 'notes'
 
 def process_files(file_iterator: typing.Iterator[typing.IO], processor) -> pandas.DataFrame:
 
