@@ -72,7 +72,9 @@ class CPGCachingOperator(BaseOperator):
         if cpgintegrate.TIMESTAMP_FIELD_NAME in old_frame.columns \
                 and out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
                 .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
+            logging.info("Old dataset still current, outputting that")
             return old_frame
+        logging.info("Dataset changed, outputting new one")
         return out_frame
 
 
