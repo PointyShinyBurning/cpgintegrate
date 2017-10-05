@@ -41,7 +41,7 @@ class XComDatasetToCkan(BaseOperator):
             url=conn.host + url_ending,
             data=request_data,
             headers={"Authorization": conn.get_password()},
-            files={self.source_task_id: push_frame.to_csv()},
+            files={"upload": (self.source_task_id, push_frame.to_csv())},
         )
         logging.info("HTTP Status Code: %s", res.status_code)
         assert res.status_code == 200
