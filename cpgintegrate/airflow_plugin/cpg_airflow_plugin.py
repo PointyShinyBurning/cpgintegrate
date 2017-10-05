@@ -30,7 +30,8 @@ class XComDatasetToCkan(BaseOperator):
         ).json()['result']['resources']
 
         try:
-            request_data = {"id": [res['id'] for res in existing_resource_list if res['name'] == self.source_task_id][0]}
+            request_data = {"id": [res['id'] for res
+                                   in existing_resource_list if res['name'] == self.source_task_id][0]}
             url_ending = '/api/3/action/resource_update'
         except IndexError:
             request_data = {"package_id": self.ckan_package_id, "name": self.source_task_id}

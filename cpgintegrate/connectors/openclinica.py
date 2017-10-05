@@ -69,15 +69,17 @@ class OpenClinica(Connector):
                    for k, v in item_group_listize(item_group)})
 
         def get_item_info(item_oid):
-            item_info = {cpgintegrate.DESCRIPTION_ATTRIBUTE_NAME:
-                             self.xml.xpath(".//default:ItemDef[@OID='%s']" % item_oid, namespaces=self.nsmap)
-                             [0].attrib.get("Comment")}
+            item_info = {
+                cpgintegrate.DESCRIPTION_ATTRIBUTE_NAME:
+                    self.xml.xpath(".//default:ItemDef[@OID='%s']" % item_oid,
+                                   namespaces=self.nsmap)[0].attrib.get("Comment")}
             measurement_units = self.xml.xpath(".//default:ItemDef[@OID='%s']//default:MeasurementUnitRef"
                                                % item_oid, namespaces=self.nsmap)
             if len(measurement_units):
-                item_info[cpgintegrate.UNITS_ATTRIBUTE_NAME] = self.xml.xpath(".//default:MeasurementUnit[@OID='%s']"
-                                                    % measurement_units[0].attrib.get("MeasurementUnitOID"),
-                                                    namespaces=self.nsmap)[0].attrib.get("Name")
+                item_info[cpgintegrate.UNITS_ATTRIBUTE_NAME] =\
+                    self.xml.xpath(".//default:MeasurementUnit[@OID='%s']"
+                                   % measurement_units[0].attrib.get("MeasurementUnitOID"),
+                                   namespaces=self.nsmap)[0].attrib.get("Name")
             return item_info
 
         forms = self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and @OpenClinica:Status != 'invalid']"
@@ -85,7 +87,7 @@ class OpenClinica(Connector):
 
         item_oids = {item.attrib.get('ItemOID') for item
                      in self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and"
-                                       " @OpenClinica:Status != 'invalid']//default:ItemData"
+                     " @OpenClinica:Status != 'invalid']//default:ItemData"
                                        % form_oid_prefix, namespaces=self.nsmap)}
 
         column_info = {item_oid: get_item_info(item_oid) for item_oid in item_oids}

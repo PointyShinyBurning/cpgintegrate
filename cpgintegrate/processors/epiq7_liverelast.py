@@ -5,6 +5,7 @@ import tempfile
 from cpgintegrate import ColumnInfoFrame
 import cpgintegrate
 
+
 def to_frame(file):
     """Turns pdf or excel liver elastography analysis from Philips EPIQ 7 into a DataFrame
     Needs pdftotext from xpdf (http://www.foolabs.com/xpdf/home.html) to be somewhere in the PATH
@@ -67,5 +68,6 @@ def to_frame(file):
                               },
                      inplace=True)
 
-    sheet.columns = [col.replace(" (kPa)","") for col in sheet.columns]
-    return ColumnInfoFrame(sheet, column_info={col:{cpgintegrate.UNITS_ATTRIBUTE_NAME:"kPa"} for col in sheet.columns})
+    sheet.columns = [col.replace(" (kPa)", "") for col in sheet.columns]
+    return ColumnInfoFrame(sheet,
+                           column_info={col: {cpgintegrate.UNITS_ATTRIBUTE_NAME: "kPa"} for col in sheet.columns})
