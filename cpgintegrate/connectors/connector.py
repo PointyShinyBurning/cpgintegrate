@@ -12,7 +12,10 @@ class Connector(ABC):
         pass
 
     def get_dataset(self, *args, **kwargs) -> pandas.DataFrame:
-        return self._read_dataset(*args, **kwargs).assign(**{cpgintegrate.TIMESTAMP_FIELD_NAME: time.time()})
+        return (self
+                ._read_dataset(*args, **kwargs).assign(**{cpgintegrate.TIMESTAMP_FIELD_NAME: time.time()})
+                .rename_axis(cpgintegrate.SUBJECT_ID_FIELD_NAME)
+                )
 
     @abstractmethod
     def _read_dataset(self, *args, **kwargs) -> pandas.DataFrame:

@@ -21,7 +21,7 @@ def to_frame(file):
     item_repeats = {}
     xml = etree.fromstring(subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name, shell=True,
                                                    encoding='utf-8', errors='replace').encode("utf-8"))
-    f = ColumnInfoFrame({"SubjectID": [xml.findtext('./patient/id')]})
+    f = ColumnInfoFrame({'FileSubjectID': [xml.findtext('./patient/id')]})
     f = pandas.concat([f, ColumnInfoFrame(
         {prefix + '_' + l.tag: l.text
          for prefix in ['study', 'series'] for l in xml.find('./' + prefix)}, index=[0])],
@@ -53,4 +53,4 @@ def to_frame(file):
             f[identifier] = value
 
     os.remove(temp_file.name)
-    return f
+    return f.set_index('FileSubjectID')

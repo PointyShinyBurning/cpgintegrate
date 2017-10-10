@@ -95,13 +95,13 @@ class OpenClinica(Connector):
         return (
             ColumnInfoFrame((form_to_dict(form) for form in forms), column_info=column_info)
             .set_index('SubjectData:StudySubjectID', drop=True)
-            .assign(
-                Source=lambda frame:
+            .assign(**{
+                cpgintegrate.SOURCE_FIELD_NAME: lambda frame:
                 self.base_url + '/rest/clinicaldata/html/print/' + self.study_oid + '/'
                 + frame['SubjectData:SubjectKey'].str.cat([
                     frame['StudyEventData:StudyEventOID'] +
                     '%5B' + frame.get('StudyEventData:StudyEventRepeatKey', "1") + '%5D',
                     frame['FormData:FormOID']], sep="/"
-                ) + '?includeAudits=y&includeDNs=y',
+                ) + '?includeAudits=y&includeDNs=y'},
             )
         )
