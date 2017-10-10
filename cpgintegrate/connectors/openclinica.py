@@ -47,7 +47,7 @@ class OpenClinica(Connector):
                     .get("{%s}StudySubjectID" % self.nsmap["OpenClinica"]))
             yield file_like
 
-    def _read_dataset(self, form_oid_prefix: str = "") -> pd.DataFrame:
+    def _read_dataset(self, form_oid_prefix: str = "", include_meta_columns=False) -> pd.DataFrame:
 
         def form_to_dict(form):
             def item_group_listize(item_group):
@@ -104,4 +104,8 @@ class OpenClinica(Connector):
                     frame['FormData:FormOID']], sep="/"
                 ) + '?includeAudits=y&includeDNs=y'},
             )
+            .select(axis=1,
+                    crit=lambda col: True if include_meta_columns
+                    else lambda col: col in list(item_oids)+['FormData:Version', cpgintegrate.SOURCE_FIELD_NAME]
+                    )
         )
