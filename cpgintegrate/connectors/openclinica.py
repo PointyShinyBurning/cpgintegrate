@@ -93,7 +93,6 @@ class OpenClinica(Connector):
 
         return (
             ColumnInfoFrame((form_to_dict(form) for form in forms), column_info=column_info)
-            .set_index('SubjectData:StudySubjectID', drop=True)
             .assign(**{
                 cpgintegrate.SOURCE_FIELD_NAME: lambda frame:
                 self.base_url + '/rest/clinicaldata/html/print/' + self.study_oid + '/'
@@ -103,6 +102,7 @@ class OpenClinica(Connector):
                     frame['FormData:FormOID']], sep="/"
                 ) + '?includeAudits=y&includeDNs=y'},
             )
+            .set_index('SubjectData:StudySubjectID', drop=True)
             .select(axis=1,
                     crit=(lambda col: True) if include_meta_columns
                     else (lambda col: col in list(item_oids)+['FormData:Version', cpgintegrate.SOURCE_FIELD_NAME])
