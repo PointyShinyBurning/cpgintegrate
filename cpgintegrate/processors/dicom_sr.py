@@ -36,7 +36,7 @@ def to_frame(file):
                 "./item[concept='Derivation']/value")
             unit = elem.xpath("./unit")
             if len(prefix):
-                identifier = prefix[0].text + "_" + identifier
+                identifier = prefix[0].text.replace("�", "") + "_" + identifier
 
             for x in suffixes:
                 identifier += "_" + x.text
