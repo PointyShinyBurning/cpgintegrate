@@ -20,7 +20,7 @@ def to_frame(file):
 
     item_repeats = {}
     xml = etree.fromstring(
-            subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name,
+            subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name, shell=True,
                                     universal_newlines=True).encode('utf-8'))
     f = ColumnInfoFrame({'FileSubjectID': [xml.findtext('./patient/id')]})
     f = pandas.concat([f, ColumnInfoFrame(
