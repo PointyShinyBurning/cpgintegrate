@@ -19,8 +19,9 @@ def to_frame(file):
     temp_file.close()
 
     item_repeats = {}
-    xml = etree.fromstring(subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name, shell=True,
-                                                   encoding='utf-8', errors='replace').encode("utf-8"))
+    xml = etree.fromstring(
+            subprocess.check_output('dsr2xml -Ee +Ea +Wt -q -Ei "%s"' % temp_file.name,
+                                    universal_newlines=True).encode('utf-8'))
     f = ColumnInfoFrame({'FileSubjectID': [xml.findtext('./patient/id')]})
     f = pandas.concat([f, ColumnInfoFrame(
         {prefix + '_' + l.tag: l.text
@@ -30,7 +31,7 @@ def to_frame(file):
         if elem.get("valType") in ["NUM", "TEXT"]:
             identifier = elem.findtext("concept")
             value = elem.findtext("value")
-            prefix = elem.xpath("../item[concept='Label' or concept='Region']/value") + elem.xpath(
+            prefix = elem.xpath("../item[concept='Label' or concept='Region' or concept='Measure']/value") + elem.xpath(
                 "../../item[concept='Finding Site']/value")
             suffixes = elem.xpath("./item[concept='Finding Site']/value") + elem.xpath(
                 "./item[concept='Derivation']/value")
