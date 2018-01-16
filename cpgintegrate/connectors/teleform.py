@@ -24,5 +24,5 @@ class Teleform(Connector):
             except KeyError:
                 print("Teleform edits error on %s , %s" % (row.field, row.value))
 
-        frame.index = frame[tbl].StudyID
+        frame.index = frame.StudyID
         return frame
