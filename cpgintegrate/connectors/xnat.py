@@ -2,14 +2,14 @@ import requests
 import pandas
 import pandas.io.json
 import typing
-from .connector import Connector
+from .connector import FileDownloadingConnector
 import cpgintegrate
 
 
-class XNAT(Connector):
+class XNAT(FileDownloadingConnector):
 
-    def __init__(self, xnat_url: str, project_id: str, auth: (str, str)):
-        super().__init__()
+    def __init__(self, xnat_url: str, project_id: str, auth: (str, str), **kwargs):
+        super().__init__(**kwargs)
         self.base_url = xnat_url
         self.project_id = project_id
         self.session = requests.session()

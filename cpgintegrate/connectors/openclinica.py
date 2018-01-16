@@ -1,15 +1,16 @@
 import requests
 from lxml import etree
 import typing
-from .connector import Connector
+from .connector import FileDownloadingConnector
 import cpgintegrate
 from cpgintegrate import ColumnInfoFrame
 
 
-class OpenClinica(Connector):
+class OpenClinica(FileDownloadingConnector):
 
-    def __init__(self, openclinica_url: str, study_oid: str, auth: (str, str) = None, xml_path: str = None):
-        super().__init__()
+    def __init__(self, openclinica_url: str, study_oid: str, auth: (str, str) = None, xml_path: str = None,
+                 **kwargs):
+        super().__init__(**kwargs)
         self.base_url = openclinica_url
         self.study_oid = study_oid
 

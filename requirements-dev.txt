@@ -3,3 +3,4 @@ pandas>=0.18.1
 requests>=2.10
 lxml>=3
 apache-airflow
+sqlalchemy>=1.0

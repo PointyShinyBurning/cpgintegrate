@@ -7,8 +7,7 @@ import time
 
 class Connector(ABC):
 
-    @abstractmethod
-    def iter_files(self, *args, **kwargs) -> typing.Iterator[typing.IO]:
+    def __init__(self, **kwargs):
         pass
 
     def get_dataset(self, *args, **kwargs) -> pandas.DataFrame:
@@ -19,6 +18,13 @@ class Connector(ABC):
 
     @abstractmethod
     def _read_dataset(self, *args, **kwargs) -> pandas.DataFrame:
+        pass
+
+
+class FileDownloadingConnector(Connector):
+
+    @abstractmethod
+    def iter_files(self, *args, **kwargs) -> typing.Iterator[typing.IO]:
         pass
 
     def process_files(self, processor, *args, **kwargs):
