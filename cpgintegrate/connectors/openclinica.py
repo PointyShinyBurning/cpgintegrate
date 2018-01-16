@@ -8,10 +8,10 @@ from cpgintegrate import ColumnInfoFrame
 
 class OpenClinica(FileDownloadingConnector):
 
-    def __init__(self, openclinica_url: str, study_oid: str, auth: (str, str) = None, xml_path: str = None,
-                 **kwargs):
+    def __init__(self, study_oid: str, auth: (str, str) = None, xml_path: str = None,
+                 host="http://localhost/OpenClinica", **kwargs):
         super().__init__(**kwargs)
-        self.base_url = openclinica_url
+        self.base_url = host
         self.study_oid = study_oid
 
         self.xml, self.nsmap = None, None

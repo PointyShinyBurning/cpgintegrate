@@ -8,9 +8,9 @@ import cpgintegrate
 
 class XNAT(FileDownloadingConnector):
 
-    def __init__(self, xnat_url: str, project_id: str, auth: (str, str), **kwargs):
+    def __init__(self, project_id: str, auth: (str, str), host="https://localhost/xnat", **kwargs):
         super().__init__(**kwargs)
-        self.base_url = xnat_url
+        self.base_url = host
         self.project_id = project_id
         self.session = requests.session()
         self.auth = auth

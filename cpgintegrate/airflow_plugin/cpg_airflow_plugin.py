@@ -95,7 +95,7 @@ class CPGDatasetToXCom(CPGCachingOperator):
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
-        return self.connector_class(conn.host, *self.connector_args,
+        return self.connector_class(*self.connector_args,
                                     auth=(conn.login, conn.get_password()), **vars(conn), **self.connector_kwargs)
 
     def _get_dataframe(self, context):

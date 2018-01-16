@@ -5,7 +5,7 @@ from .connector import Connector
 
 class Teleform(Connector):
 
-    def __init__(self, host, docs_path, auth=("", ""), schema="postgres", port=5432, **kwargs):
+    def __init__(self, docs_path, auth=("", ""), schema="postgres", port=5432, host='localhost', **kwargs):
         super().__init__(**kwargs)
         self.dbString = 'postgresql://%s:%s@%s:%s/%s' % (auth[0], auth[1], host, port, schema)
         self.docsPath = docs_path
