@@ -99,7 +99,8 @@ class OpenClinica(FileDownloadingConnector):
                 self.base_url + '/rest/clinicaldata/html/print/' + self.study_oid + '/'
                 + frame['SubjectData:SubjectKey'].str.cat([
                     frame['StudyEventData:StudyEventOID'] +
-                    '%5B' + frame.get('StudyEventData:StudyEventRepeatKey', "1") + '%5D',
+                    ('%5B' + frame['StudyEventData:StudyEventRepeatKey'] + '%5D'
+                     if frame.get('StudyEventData:StudyEventRepeatKey') else ""),
                     frame['FormData:FormOID']], sep="/"
                 ) + '?includeAudits=y&includeDNs=y'},
             )
