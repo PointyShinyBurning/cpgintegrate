@@ -45,6 +45,7 @@ class OpenClinica(FileDownloadingConnector):
             zip_file = ZipFile(BytesIO(self.session.get(zip_file_url).content))
             self.xml = etree.parse(zip_file.open(zip_file.namelist()[0])).getroot()
         else:
+            # TODO Defer this download until iter_files or _read_dataset?
             self.xml = etree.fromstring(self.session.get(
                 self.base_url + '/rest/clinicaldata/xml/view/%s/*/*/*?includeAudits=y&includeDNs=y'
                 % study_oid).content)
