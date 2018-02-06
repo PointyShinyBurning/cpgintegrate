@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import os
 
 setup(
     name="cpgintegrate",
-    version="0.2.3",
+    version="0.2.4",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -18,4 +19,8 @@ setup(
             'pytest>=3.2.2',
         ]
                     },
+    data_files=[
+        (os.path.join(os.environ.get('AIRFLOW_HOME', 'airflow'), 'plugins'),
+         ['cpgintegrate/airflow_plugin/cpg_airflow_plugin.py'])
+    ],
 )
