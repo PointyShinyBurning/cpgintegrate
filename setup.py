@@ -7,11 +7,15 @@ setup(
     include_package_data=True,
     install_requires=[
         'requests>=2.18.4',
-        'lxml>=4',
         'pandas>=0.22.0',
         'xlrd',
         'sqlalchemy>=1.0',
         'beautifulsoup4',
-        'apache-airflow>=1.9.0'
-    ]
+        'apache-airflow>=1.9.0',
+        'lxml',
+    ],
+    extras_require={'dev': [
+            'pytest>=3.2.2',
+        ]
+                    },
 )
