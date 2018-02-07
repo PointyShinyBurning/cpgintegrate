@@ -5,58 +5,66 @@ from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
-import logging
 import requests
 import pandas
+from airflow.utils.state import State
 
 
 class XComDatasetToCkan(BaseOperator):
 
     @apply_defaults
-    def __init__(self, source_task_id, ckan_connection_id, ckan_package_id, *args, **kwargs):
+    def __init__(self, source_task_id, ckan_connection_id, ckan_package_id, check_freshness=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.source_task_id = source_task_id
         self.ckan_connection_id = ckan_connection_id
         self.ckan_package_id = ckan_package_id
+        self.check_freshness = check_freshness
 
     def execute(self, context):
         conn = BaseHook.get_connection(self.ckan_connection_id)
 
         push_frame = context['ti'].xcom_pull(self.source_task_id)
-        existing_resource_list = requests.get(
-            url=conn.host + '/api/3/action/package_show',
-            headers={"Authorization": conn.get_password()},
-            params={"id": self.ckan_package_id},
-        ).json()['result']['resources']
 
-        try:
-            request_data = {"id": [res['id'] for res
-                                   in existing_resource_list if res['name'] == self.source_task_id][0]}
-            url_ending = '/api/3/action/resource_update'
-        except IndexError:
-            request_data = {"package_id": self.ckan_package_id, "name": self.source_task_id}
-            url_ending = '/api/3/action/resource_create'
-            logging.info("Creating resource %s", self.ckan_package_id)
+        if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['execution_date'].timestamp()
+                or not self.check_freshness):
 
-        res = requests.post(
-            url=conn.host + url_ending,
-            data=request_data,
-            headers={"Authorization": conn.get_password()},
-            files={"upload": (self.source_task_id+".csv", push_frame.to_csv())},
-        )
-        logging.info("HTTP Status Code: %s", res.status_code)
-        assert res.status_code == 200
+            existing_resource_list = requests.get(
+                url=conn.host + '/api/3/action/package_show',
+                headers={"Authorization": conn.get_password()},
+                params={"id": self.ckan_package_id},
+            ).json()['result']['resources']
 
-        # Push metadata if exists'
-        if hasattr(push_frame, 'get_json_column_info'):
-            datadict_res = requests.post(
-                url=conn.host + '/api/3/action/datastore_create',
-                data='{"resource_id":"%s", "force":"true","fields":%s}' %
-                     (res.json()['result']['id'], push_frame.get_json_column_info()),
-                headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+            try:
+                request_data = {"id": [res['id'] for res
+                                       in existing_resource_list if res['name'] == self.source_task_id][0]}
+                url_ending = '/api/3/action/resource_update'
+            except IndexError:
+                request_data = {"package_id": self.ckan_package_id, "name": self.source_task_id}
+                url_ending = '/api/3/action/resource_create'
+                self.log.info("Creating resource %s", self.ckan_package_id)
+
+            res = requests.post(
+                url=conn.host + url_ending,
+                data=request_data,
+                headers={"Authorization": conn.get_password()},
+                files={"upload": (self.source_task_id+".csv", push_frame.to_csv())},
             )
-            logging.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
-            assert datadict_res.status_code == 200
+            self.log.info("HTTP Status Code: %s", res.status_code)
+            assert res.status_code == 200
+
+            # Push metadata if exists'
+            if hasattr(push_frame, 'get_json_column_info'):
+                datadict_res = requests.post(
+                    url=conn.host + '/api/3/action/datastore_create',
+                    data='{"resource_id":"%s", "force":"true","fields":%s}' %
+                         (res.json()['result']['id'], push_frame.get_json_column_info()),
+                    headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+                )
+                self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
+                assert datadict_res.status_code == 200
+        else:
+            self.log.info("Data unchanged in this run, not pushing")
+            context['ti'].state = State.SKIPPED
 
 
 class CPGCachingOperator(BaseOperator):
@@ -73,9 +81,9 @@ class CPGCachingOperator(BaseOperator):
         if cpgintegrate.TIMESTAMP_FIELD_NAME in old_frame.columns \
                 and out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
                 .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
-            logging.info("Old dataset still current, outputting that")
+            self.log.info("Old dataset still current, outputting that")
             return old_frame
-        logging.info("Dataset changed, outputting new one")
+        self.log.info("Dataset changed, outputting new one")
         return out_frame
 
 
@@ -131,7 +139,7 @@ class XComDatasetProcess(CPGCachingOperator):
 
     @apply_defaults
     def __init__(self, source_task_id, post_processor=None, filter_cols=None, drop_na_cols=True,
-               row_filter=lambda row: True, *args, **kwargs):
+                 row_filter=lambda row: True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.source_task_id = source_task_id
         self.post_processor = post_processor or (lambda x: x)
