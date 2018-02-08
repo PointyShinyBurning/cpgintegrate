@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from airflow.models import BaseOperator
+from airflow.models import BaseOperator, SkipMixin
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
@@ -25,48 +25,43 @@ class XComDatasetToCkan(BaseOperator):
 
         push_frame = context['ti'].xcom_pull(source_task_id)
 
-        if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['dag_run'].start_date.timestamp())\
-                or not self.check_freshness:
+        existing_resource_list = requests.get(
+            url=conn.host + '/api/3/action/package_show',
+            headers={"Authorization": conn.get_password()},
+            params={"id": self.ckan_package_id},
+        ).json()['result']['resources']
 
-            existing_resource_list = requests.get(
-                url=conn.host + '/api/3/action/package_show',
-                headers={"Authorization": conn.get_password()},
-                params={"id": self.ckan_package_id},
-            ).json()['result']['resources']
+        try:
+            request_data = {"id": [res['id'] for res
+                                   in existing_resource_list if res['name'] == source_task_id][0]}
+            url_ending = '/api/3/action/resource_update'
+        except IndexError:
+            request_data = {"package_id": self.ckan_package_id, "name": source_task_id}
+            url_ending = '/api/3/action/resource_create'
+            self.log.info("Creating resource %s", self.ckan_package_id)
 
-            try:
-                request_data = {"id": [res['id'] for res
-                                       in existing_resource_list if res['name'] == source_task_id][0]}
-                url_ending = '/api/3/action/resource_update'
-            except IndexError:
-                request_data = {"package_id": self.ckan_package_id, "name": source_task_id}
-                url_ending = '/api/3/action/resource_create'
-                self.log.info("Creating resource %s", self.ckan_package_id)
+        res = requests.post(
+            url=conn.host + url_ending,
+            data=request_data,
+            headers={"Authorization": conn.get_password()},
+            files={"upload": (source_task_id+".csv", push_frame.to_csv())},
+        )
+        self.log.info("HTTP Status Code: %s", res.status_code)
+        assert res.status_code == 200
 
-            res = requests.post(
-                url=conn.host + url_ending,
-                data=request_data,
-                headers={"Authorization": conn.get_password()},
-                files={"upload": (source_task_id+".csv", push_frame.to_csv())},
+        # Push metadata if exists'
+        if hasattr(push_frame, 'get_json_column_info'):
+            datadict_res = requests.post(
+                url=conn.host + '/api/3/action/datastore_create',
+                data='{"resource_id":"%s", "force":"true","fields":%s}' %
+                     (res.json()['result']['id'], push_frame.get_json_column_info()),
+                headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
             )
-            self.log.info("HTTP Status Code: %s", res.status_code)
-            assert res.status_code == 200
-
-            # Push metadata if exists'
-            if hasattr(push_frame, 'get_json_column_info'):
-                datadict_res = requests.post(
-                    url=conn.host + '/api/3/action/datastore_create',
-                    data='{"resource_id":"%s", "force":"true","fields":%s}' %
-                         (res.json()['result']['id'], push_frame.get_json_column_info()),
-                    headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
-                )
-                self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
-                assert datadict_res.status_code == 200
-        else:
-            self.log.info("Data unchanged in this run, not pushing")
+            self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
+            assert datadict_res.status_code == 200
 
 
-class CPGCachingOperator(BaseOperator):
+class CPGCachingOperator(BaseOperator, SkipMixIn):
 
     @abstractmethod
     def _get_dataframe(self, context):
@@ -80,8 +75,12 @@ class CPGCachingOperator(BaseOperator):
         if cpgintegrate.TIMESTAMP_FIELD_NAME in old_frame.columns \
                 and out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
                 .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
-            self.log.info("Old dataset still current, outputting that")
-            return old_frame
+            self.log.info("Old dataset still current, returning none and skipping downstream")
+            downstream_tasks = context['task'].get_flat_relatives(upstream=False)
+
+            if downstream_tasks:
+                self.skip(context['dag_run'], context['ti'].execution_date, downstream_tasks)
+            return
         self.log.info("Dataset changed, outputting new one")
         return out_frame
 
