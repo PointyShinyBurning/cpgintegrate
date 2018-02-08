@@ -61,7 +61,7 @@ class XComDatasetToCkan(BaseOperator):
             assert datadict_res.status_code == 200
 
 
-class CPGCachingOperator(BaseOperator, SkipMixIn):
+class CPGCachingOperator(BaseOperator, SkipMixin):
 
     @abstractmethod
     def _get_dataframe(self, context):
