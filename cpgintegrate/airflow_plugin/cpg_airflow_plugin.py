@@ -26,7 +26,7 @@ class XComDatasetToCkan(BaseOperator):
 
         push_frame = context['ti'].xcom_pull(source_task_id)
 
-        if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['execution_date'].timestamp())\
+        if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['dag_run'].start_date.timestamp())\
                 or not self.check_freshness:
 
             existing_resource_list = requests.get(
