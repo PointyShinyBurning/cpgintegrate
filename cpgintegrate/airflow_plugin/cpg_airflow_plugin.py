@@ -22,7 +22,9 @@ class XComDatasetToCkan(BaseOperator):
     def execute(self, context):
         conn = BaseHook.get_connection(self.ckan_connection_id)
 
-        push_frame = context['ti'].xcom_pull(self.upstream_task_ids[0])
+        source_task_id = self.upstream_task_ids[0]
+
+        push_frame = context['ti'].xcom_pull(source_task_id)
 
         if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['execution_date'].timestamp())\
                 or not self.check_freshness:
@@ -35,10 +37,10 @@ class XComDatasetToCkan(BaseOperator):
 
             try:
                 request_data = {"id": [res['id'] for res
-                                       in existing_resource_list if res['name'] == self.source_task_id][0]}
+                                       in existing_resource_list if res['name'] == source_task_id][0]}
                 url_ending = '/api/3/action/resource_update'
             except IndexError:
-                request_data = {"package_id": self.ckan_package_id, "name": self.source_task_id}
+                request_data = {"package_id": self.ckan_package_id, "name": source_task_id}
                 url_ending = '/api/3/action/resource_create'
                 self.log.info("Creating resource %s", self.ckan_package_id)
 
@@ -46,7 +48,7 @@ class XComDatasetToCkan(BaseOperator):
                 url=conn.host + url_ending,
                 data=request_data,
                 headers={"Authorization": conn.get_password()},
-                files={"upload": (self.source_task_id+".csv", push_frame.to_csv())},
+                files={"upload": (source_task_id+".csv", push_frame.to_csv())},
             )
             self.log.info("HTTP Status Code: %s", res.status_code)
             assert res.status_code == 200
