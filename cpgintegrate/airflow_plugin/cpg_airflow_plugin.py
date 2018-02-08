@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from airflow.models import BaseOperator
+from airflow.models import BaseOperator, SkipMixin
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
@@ -10,7 +10,7 @@ import pandas
 from airflow.utils.state import State
 
 
-class XComDatasetToCkan(BaseOperator):
+class XComDatasetToCkan(BaseOperator, SkipMixin):
 
     @apply_defaults
     def __init__(self, ckan_connection_id, ckan_package_id, check_freshness=True, *args, **kwargs):
@@ -65,7 +65,11 @@ class XComDatasetToCkan(BaseOperator):
                 assert datadict_res.status_code == 200
         else:
             self.log.info("Data unchanged in this run, not pushing")
-            context['ti'].state = State.SKIPPED
+            downstream_tasks = context['task'].get_flat_relatives(upstream=False)
+            self.log.debug("Downstream task_ids %s", downstream_tasks)
+
+            if downstream_tasks:
+                self.skip(context['dag_run'], context['ti'].execution_date, downstream_tasks)
 
 
 class CPGCachingOperator(BaseOperator):
