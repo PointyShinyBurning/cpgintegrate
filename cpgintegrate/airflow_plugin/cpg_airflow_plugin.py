@@ -13,9 +13,8 @@ from airflow.utils.state import State
 class XComDatasetToCkan(BaseOperator):
 
     @apply_defaults
-    def __init__(self, source_task_id, ckan_connection_id, ckan_package_id, check_freshness=True, *args, **kwargs):
+    def __init__(self, ckan_connection_id, ckan_package_id, check_freshness=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.source_task_id = source_task_id
         self.ckan_connection_id = ckan_connection_id
         self.ckan_package_id = ckan_package_id
         self.check_freshness = check_freshness
@@ -23,10 +22,10 @@ class XComDatasetToCkan(BaseOperator):
     def execute(self, context):
         conn = BaseHook.get_connection(self.ckan_connection_id)
 
-        push_frame = context['ti'].xcom_pull(self.source_task_id)
+        push_frame = context['ti'].xcom_pull(self.upstream_task_ids[0])
 
-        if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['execution_date'].timestamp()
-                or not self.check_freshness):
+        if (push_frame[cpgintegrate.TIMESTAMP_FIELD_NAME].max() > context['execution_date'].timestamp())\
+                or not self.check_freshness:
 
             existing_resource_list = requests.get(
                 url=conn.host + '/api/3/action/package_show',
@@ -138,10 +137,9 @@ class XComDatasetProcess(CPGCachingOperator):
     cols_always_present = [cpgintegrate.TIMESTAMP_FIELD_NAME, cpgintegrate.SOURCE_FIELD_NAME]
 
     @apply_defaults
-    def __init__(self, source_task_id, post_processor=None, filter_cols=None, drop_na_cols=True,
+    def __init__(self, post_processor=None, filter_cols=None, drop_na_cols=True,
                  row_filter=lambda row: True, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.source_task_id = source_task_id
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
             self.column_filter = {"items": filter_cols+self.cols_always_present}
@@ -153,7 +151,7 @@ class XComDatasetProcess(CPGCachingOperator):
         self.drop_na_cols = drop_na_cols
 
     def _get_dataframe(self, context):
-        out_frame = self.post_processor(context['ti'].xcom_pull(self.source_task_id)
+        out_frame = self.post_processor(context['ti'].xcom_pull(self.upstream_task_ids[0])
                                         .filter(**self.column_filter)
                                         .loc[lambda df: df.apply(self.row_filter, axis=1)])
         if self.drop_na_cols:

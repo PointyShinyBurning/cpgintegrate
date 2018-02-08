@@ -3,7 +3,7 @@ import os
 
 setup(
     name="cpgintegrate",
-    version="0.2.5",
+    version="0.2.6SNAPSHOT",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
