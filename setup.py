@@ -13,7 +13,7 @@ setup(
         'sqlalchemy>=1.0',
         'beautifulsoup4',
         'apache-airflow>=1.9.0',
-        'lxml',
+        'lxml<4.0',
     ],
     extras_require={'dev': [
             'pytest>=3.2.2',
