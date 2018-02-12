@@ -21,6 +21,6 @@ setup(
                     },
     data_files=[
         (os.path.join(os.environ.get('AIRFLOW_HOME', 'airflow'), 'plugins'),
-         ['cpgintegrate/airflow_plugin/cpg_airflow_plugin.py'])
+         ['cpgintegrate/airflow/cpg_airflow_plugin.py'])
     ],
 )

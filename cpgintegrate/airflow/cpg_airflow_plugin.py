@@ -12,11 +12,10 @@ import pandas
 class XComDatasetToCkan(BaseOperator):
 
     @apply_defaults
-    def __init__(self, ckan_connection_id, ckan_package_id, check_freshness=True, *args, **kwargs):
+    def __init__(self, ckan_connection_id, ckan_package_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ckan_connection_id = ckan_connection_id
         self.ckan_package_id = ckan_package_id
-        self.check_freshness = check_freshness
 
     def execute(self, context):
         conn = BaseHook.get_connection(self.ckan_connection_id)
@@ -89,20 +88,16 @@ class CPGDatasetToXCom(CPGCachingOperator):
     ui_color = '#7DF9FF'
 
     @apply_defaults
-    def __init__(self, connector_class, connection_id, connector_args, connector_kwargs=None,
-                 dataset_args=None, dataset_kwargs=None, *args, **kwargs):
+    def __init__(self, connector_class, connection_id, dataset_args=None, dataset_kwargs=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
         self.connection_id = connection_id
-        self.connector_args = connector_args
-        self.connector_kwargs = connector_kwargs or {}
         self.dataset_args = dataset_args or []
         self.dataset_kwargs = dataset_kwargs or {}
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
-        return self.connector_class(*self.connector_args,
-                                    auth=(conn.login, conn.get_password()), **vars(conn), **self.connector_kwargs)
+        return self.connector_class(auth=(conn.login, conn.get_password()), **vars(conn), **conn.extra_dejson())
 
     def _get_dataframe(self, context):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)

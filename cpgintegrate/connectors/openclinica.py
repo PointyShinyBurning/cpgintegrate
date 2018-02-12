@@ -12,11 +12,11 @@ from io import BytesIO
 
 class OpenClinica(FileDownloadingConnector):
 
-    def __init__(self, study_oid: str, auth: (str, str) = None, xml_path: str = None, dataset_id: int = None,
+    def __init__(self, schema: str, auth: (str, str) = None, xml_path: str = None, dataset_id: int = None,
                  host='http://localhost/OpenClinica', **kwargs):
         super().__init__(**kwargs)
         self.base_url = host
-        self.study_oid = study_oid
+        self.study_oid = schema
 
         self.xml, self.nsmap = None, None
         self.session = None
@@ -30,7 +30,7 @@ class OpenClinica(FileDownloadingConnector):
                               data={'j_username': username, 'j_password': password})
 
             # Change to the right study via study name from metadata and parsing the ChangeStudy page
-            study_name = self.session.get('/'.join([self.base_url, 'rest/metadata/json/view/%s/*/*' % study_oid])) \
+            study_name = self.session.get('/'.join([self.base_url, 'rest/metadata/json/view/%s/*/*' % schema])) \
                 .json()['Study']['GlobalVariables']['StudyName']
             change_study_page = BeautifulSoup(self.session.get(self.base_url + '/ChangeStudy').content, 'lxml')
             study_id = change_study_page.find('form', action="ChangeStudy").find(
