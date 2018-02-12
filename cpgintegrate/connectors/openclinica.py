@@ -87,10 +87,14 @@ class OpenClinica(FileDownloadingConnector):
 
     def _read_dataset(self, form_oid_prefix: str = "", include_meta_columns=False):
 
+        def item_col_name(item_data):
+            return "_".join(
+                filter(None, [item_data.attrib['ItemOID'], item_data.getparent().attrib.get('ItemGroupRepeatKey')]))
+
         def form_to_dict(form):
             def item_group_listize(item_group):
                 return (
-                    ("_".join(filter(None, [item_data.attrib['ItemOID'], item_group.attrib.get('ItemGroupRepeatKey')])),
+                    (item_col_name(item_data),
                      item_data.attrib.get('Value'))
                     for item_data in item_group.xpath('./default:ItemData', namespaces=self.nsmap))
 
@@ -133,19 +137,17 @@ class OpenClinica(FileDownloadingConnector):
         forms = self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and @OpenClinica:Status != 'invalid']"
                                % form_oid_prefix, namespaces=self.nsmap)
 
-        item_oids = {item.attrib.get('ItemOID') for item
-                     in self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and"
-                                       " @OpenClinica:Status != 'invalid']//default:ItemData"
-                                       % form_oid_prefix, namespaces=self.nsmap)}
-
-        column_info = {item_oid: get_item_info(item_oid) for item_oid in item_oids}
+        column_info = {item_col_name(item_data): get_item_info(item_data.attrib['ItemOID']) for item_data
+                       in self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and"
+                                         " @OpenClinica:Status != 'invalid']//default:ItemData"
+                                         % form_oid_prefix, namespaces=self.nsmap)}
 
         return (ColumnInfoFrame((form_to_dict(form) for form in forms), column_info=column_info)
                 .assign(**{cpgintegrate.SOURCE_FIELD_NAME: lambda frame: source_from_frame(frame)})
                 .set_index('SubjectData:StudySubjectID', drop=True)
                 .select(axis=1,
                         crit=(lambda col: True) if include_meta_columns
-                        else (lambda col: (any(col.startswith(item_oid) for item_oid in item_oids)
+                        else (lambda col: (col in column_info.keys()
                                            or col in ['FormData:Version', cpgintegrate.SOURCE_FIELD_NAME]))
                         )
                 )
