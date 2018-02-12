@@ -137,10 +137,13 @@ class OpenClinica(FileDownloadingConnector):
         forms = self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and @OpenClinica:Status != 'invalid']"
                                % form_oid_prefix, namespaces=self.nsmap)
 
-        column_info = {item_col_name(item_data): get_item_info(item_data.attrib['ItemOID']) for item_data
-                       in self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and"
-                                         " @OpenClinica:Status != 'invalid']//default:ItemData"
-                                         % form_oid_prefix, namespaces=self.nsmap)}
+        columns = set((item_data.attrib['ItemOID'], item_col_name(item_data)) for item_data
+                      in self.xml.xpath(".//default:FormData[starts-with(@FormOID,'%s') and"
+                                        " @OpenClinica:Status != 'invalid']//default:ItemData"
+                                        % form_oid_prefix, namespaces=self.nsmap))
+
+        column_info = {column_name: get_item_info(column_oid) for column_oid, column_name
+                       in columns}
 
         return (ColumnInfoFrame((form_to_dict(form) for form in forms), column_info=column_info)
                 .assign(**{cpgintegrate.SOURCE_FIELD_NAME: lambda frame: source_from_frame(frame)})
