@@ -37,7 +37,7 @@ class XComDatasetToCkan(BaseOperator):
         except IndexError:
             request_data = {"package_id": self.ckan_package_id, "name": source_task_id}
             url_ending = '/api/3/action/resource_create'
-            self.log.info("Creating resource %s", self.ckan_package_id)
+            self.log.info("Creating resource %s", source_task_id)
 
         res = requests.post(
             url=conn.host + url_ending,
