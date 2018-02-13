@@ -61,6 +61,8 @@ class XComDatasetToCkan(BaseOperator):
                 assert datadict_res.status_code == 200
 
             return push_frame
+        else:
+            self.log.info("Frame unchanged, skipping push")
 
 
 class CPGDatasetToXCom(BaseOperator):
