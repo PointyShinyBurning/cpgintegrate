@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 import typing
 import pandas
 import cpgintegrate
-import time
 
 
 class Connector(ABC):
@@ -12,7 +11,7 @@ class Connector(ABC):
 
     def get_dataset(self, *args, **kwargs) -> pandas.DataFrame:
         return (self
-                ._read_dataset(*args, **kwargs).assign(**{cpgintegrate.TIMESTAMP_FIELD_NAME: time.time()})
+                ._read_dataset(*args, **kwargs)
                 .rename_axis(cpgintegrate.SUBJECT_ID_FIELD_NAME)
                 )
 

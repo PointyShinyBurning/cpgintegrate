@@ -1,12 +1,9 @@
-from abc import abstractmethod
-
-from airflow.models import BaseOperator, SkipMixin
+from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import requests
-import pandas
 
 
 class XComDatasetToCkan(BaseOperator):
@@ -18,11 +15,13 @@ class XComDatasetToCkan(BaseOperator):
         self.ckan_package_id = ckan_package_id
 
     def execute(self, context):
+
         conn = BaseHook.get_connection(self.ckan_connection_id)
 
         source_task_id = self.upstream_task_ids[0]
 
         push_frame = context['ti'].xcom_pull(source_task_id)
+        old_frame = context['ti'].xcom_pull(include_prior_dates=True)
 
         existing_resource_list = requests.get(
             url=conn.host + '/api/3/action/package_show',
@@ -30,61 +29,41 @@ class XComDatasetToCkan(BaseOperator):
             params={"id": self.ckan_package_id},
         ).json()['result']['resources']
 
+        res_create = False
         try:
-            request_data = {"id": [res['id'] for res
-                                   in existing_resource_list if res['name'] == source_task_id][0]}
+            request_data = {"id": next(res['id'] for res in existing_resource_list if res['name'] == source_task_id)}
             url_ending = '/api/3/action/resource_update'
-        except IndexError:
+        except StopIteration:
             request_data = {"package_id": self.ckan_package_id, "name": source_task_id}
             url_ending = '/api/3/action/resource_create'
             self.log.info("Creating resource %s", source_task_id)
+            res_create = True
 
-        res = requests.post(
-            url=conn.host + url_ending,
-            data=request_data,
-            headers={"Authorization": conn.get_password()},
-            files={"upload": (source_task_id+".csv", push_frame.to_csv())},
-        )
-        self.log.info("HTTP Status Code: %s", res.status_code)
-        assert res.status_code == 200
-
-        # Push metadata if exists'
-        if hasattr(push_frame, 'get_json_column_info'):
-            datadict_res = requests.post(
-                url=conn.host + '/api/3/action/datastore_create',
-                data='{"resource_id":"%s", "force":"true","fields":%s}' %
-                     (res.json()['result']['id'], push_frame.get_json_column_info()),
-                headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+        if res_create or not(push_frame.equals(old_frame)):
+            res = requests.post(
+                url=conn.host + url_ending,
+                data=request_data,
+                headers={"Authorization": conn.get_password()},
+                files={"upload": (source_task_id+".csv", push_frame.to_csv())},
             )
-            self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
-            assert datadict_res.status_code == 200
+            self.log.info("HTTP Status Code: %s", res.status_code)
+            assert res.status_code == 200
+
+            # Push metadata if exists'
+            if hasattr(push_frame, 'get_json_column_info'):
+                datadict_res = requests.post(
+                    url=conn.host + '/api/3/action/datastore_create',
+                    data='{"resource_id":"%s", "force":"true","fields":%s}' %
+                         (res.json()['result']['id'], push_frame.get_json_column_info()),
+                    headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+                )
+                self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
+                assert datadict_res.status_code == 200
+
+            return push_frame
 
 
-class CPGCachingOperator(BaseOperator, SkipMixin):
-
-    @abstractmethod
-    def _get_dataframe(self, context):
-        pass
-
-    def execute(self, context):
-        out_frame = self._get_dataframe(context)
-        xcom_pull = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
-        old_frame = xcom_pull if xcom_pull is not None \
-            else pandas.DataFrame({cpgintegrate.TIMESTAMP_FIELD_NAME: []})
-        if cpgintegrate.TIMESTAMP_FIELD_NAME in old_frame.columns \
-                and out_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)\
-                .equals(old_frame.drop(cpgintegrate.TIMESTAMP_FIELD_NAME, axis=1)):
-            self.log.info("Old dataset still current, returning none and skipping downstream")
-            downstream_tasks = context['task'].get_flat_relatives(upstream=False)
-
-            if downstream_tasks:
-                self.skip(context['dag_run'], context['ti'].execution_date, downstream_tasks)
-            return
-        self.log.info("Dataset changed, outputting new one")
-        return out_frame
-
-
-class CPGDatasetToXCom(CPGCachingOperator):
+class CPGDatasetToXCom(BaseOperator):
     ui_color = '#7DF9FF'
 
     @apply_defaults
@@ -99,7 +78,7 @@ class CPGDatasetToXCom(CPGCachingOperator):
         conn = BaseHook.get_connection(self.connection_id)
         return self.connector_class(auth=(conn.login, conn.get_password()), **vars(conn), **conn.extra_dejson)
 
-    def _get_dataframe(self, context):
+    def execute(self, context):
         return self._get_connector().get_dataset(*self.dataset_args, **self.dataset_kwargs)
 
 
@@ -117,7 +96,7 @@ class CPGProcessorToXCom(CPGDatasetToXCom):
         self.processor_kwargs = processor_kwargs or {}
         self.file_subject_id = file_subject_id
 
-    def _get_dataframe(self, context):
+    def execute(self, context):
         connector_instance = self._get_connector()
         processor_instance = self.processor(*self.processor_args, **self.processor_kwargs).to_frame \
             if isinstance(self.processor, type) else self.processor
@@ -127,7 +106,7 @@ class CPGProcessorToXCom(CPGDatasetToXCom):
                 .drop([] if self.file_subject_id else ["FileSubjectID"], axis=1))
 
 
-class XComDatasetProcess(CPGCachingOperator):
+class XComDatasetProcess(BaseOperator):
     cols_always_present = [cpgintegrate.TIMESTAMP_FIELD_NAME, cpgintegrate.SOURCE_FIELD_NAME]
 
     @apply_defaults
@@ -144,7 +123,7 @@ class XComDatasetProcess(CPGCachingOperator):
         self.row_filter = row_filter
         self.drop_na_cols = drop_na_cols
 
-    def _get_dataframe(self, context):
+    def execute(self, context):
         out_frame = self.post_processor(context['ti'].xcom_pull(self.upstream_task_ids[0])
                                         .filter(**self.column_filter)
                                         .loc[lambda df: df.apply(self.row_filter, axis=1)])

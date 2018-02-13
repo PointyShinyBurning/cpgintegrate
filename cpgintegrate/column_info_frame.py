@@ -40,3 +40,9 @@ class ColumnInfoFrame(DataFrame):
     def save_json_column_info(self, file_path):
         with open(file_path, 'w') as out_file:
             out_file.write(self.get_json_column_info())
+
+    def equals(self, other):
+        try:
+            (other.get_json_column_info() == self.get_json_column_info()) and super().equals(other)
+        except AttributeError:
+            return False

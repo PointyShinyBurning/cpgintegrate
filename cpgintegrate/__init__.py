@@ -1,14 +1,10 @@
 import pandas
 import typing
-import inspect
-import hashlib
-import time
 from .column_info_frame import ColumnInfoFrame
 
 SUBJECT_ID_ATTR = 'cpgintegrate_subject_id'
 CACHE_KEY_ATTR = 'cpgintegrate_hash_key'
 
-TIMESTAMP_FIELD_NAME = 'timestamp'
 SOURCE_FIELD_NAME = 'Source'
 SUBJECT_ID_FIELD_NAME = 'SubjectID'
 FILE_SUBJECT_ID_FIELD_NAME = 'FileSubjectID'
@@ -20,7 +16,6 @@ DESCRIPTION_ATTRIBUTE_NAME = 'notes'
 def process_files(file_iterator: typing.Iterator[typing.IO], processor) -> pandas.DataFrame:
 
     processing_func = processor if callable(processor) else processor.to_frame
-    processing_func_hash = hashlib.sha256(inspect.getsource(processing_func).encode()).digest()
 
     def get_frames():
         for file in file_iterator:
@@ -35,7 +30,7 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor) -> panda
             yield (df
                    .assign(**{SUBJECT_ID_FIELD_NAME: subject_id,
                               FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None),
-                              SOURCE_FIELD_NAME: source, TIMESTAMP_FIELD_NAME: time.time()}))
+                              SOURCE_FIELD_NAME: source, }))
 
     return pandas.concat((frame for frame in get_frames())).set_index(SUBJECT_ID_FIELD_NAME)
 
