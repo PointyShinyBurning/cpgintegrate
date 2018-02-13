@@ -49,8 +49,8 @@ class XComDatasetToCkan(BaseOperator):
             self.log.info("Found edits file")
             for _, row in edits.iterrows():
                 try:
-                    push_frame[row.field] = push_frame[row.field].astype(str)
-                    push_frame.loc[push_frame.CSID == row.CSID, row.field] = row.get("value", None)
+                    push_frame.loc[push_frame[row.match_field] == row[row.match_field], row.target_field]\
+                        = row.get("target_value", None)
                 except KeyError:
                     print("Teleform edits error on %s , %s" % (row.field, row.value))
         except StopIteration:
