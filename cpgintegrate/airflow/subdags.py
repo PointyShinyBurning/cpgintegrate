@@ -1,4 +1,5 @@
 from airflow.operators.cpg_plugin import CPGDatasetToXCom, XComDatasetToCkan
+from airflow.models import DAG
 
 
 def dataset_list_subdag(dag_id, start_date, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool,
