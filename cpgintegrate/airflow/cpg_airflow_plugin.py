@@ -135,8 +135,8 @@ class XComDatasetProcess(BaseOperator):
         return out_frame
 
 
-def _make_subdag(dag_id, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list):
-    subdag = DAG(dag_id)
+def _make_subdag(dag_id, start_date, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list):
+    subdag = DAG(dag_id, start_date=start_date)
     with subdag as dag:
         for dataset in dataset_list:
             pull = CPGDatasetToXCom(task_id=dataset, connector_class=connector_class, connection_id=connection_id,
@@ -149,10 +149,10 @@ def _make_subdag(dag_id, connector_class, connection_id, ckan_connection_id, cka
 
 class CPGDatasetListToCkan(SubDagOperator):
 
-    def __init__(self, dag_id, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list,
+    def __init__(self, dag_id, start_date, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list,
                  *args, **kwargs):
         super().__init__(subdag=_make_subdag(
-            dag_id, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list),
+            dag_id, start_date, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list),
             *args, **kwargs)
 
 
