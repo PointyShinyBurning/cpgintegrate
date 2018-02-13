@@ -21,7 +21,7 @@ class XComDatasetToCkan(BaseOperator):
         source_task_id = self.upstream_task_ids[0]
 
         push_frame = context['ti'].xcom_pull(source_task_id)
-        old_frame = context['ti'].xcom_pull(include_prior_dates=True)
+        old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
 
         existing_resource_list = requests.get(
             url=conn.host + '/api/3/action/package_show',
