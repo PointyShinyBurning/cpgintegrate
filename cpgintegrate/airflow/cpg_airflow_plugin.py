@@ -137,9 +137,8 @@ class XComDatasetProcess(BaseOperator):
 
 class CPGDatasetListToCkan(SubDagOperator):
 
-    def __init__(self, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list,
-                 *args, **kwargs):
-        subdag = DAG(dag_id=kwargs['dag']+'.'+kwargs['task_id'])
+    def _make_subdag(self, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list):
+        subdag = DAG(dag_id=self.dag+'.'+self.task_id)
         with subdag as dag:
             for dataset in dataset_list:
                 pull = CPGDatasetToXCom(task_id=dataset, connector_class=connector_class, connection_id=connection_id,
@@ -147,7 +146,12 @@ class CPGDatasetListToCkan(SubDagOperator):
                 push = XComDatasetToCkan(task_id=dataset + '_ckan_push',
                                          ckan_connection_id=ckan_connection_id, ckan_package_id=ckan_package_id)
                 pull >> push
-        super().__init__(subdag=subdag, *args, **kwargs)
+        return subdag
+
+    def __init__(self, connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list,
+                 *args, **kwargs):
+        super().__init__(subdag=self._make_subdag(
+            connector_class, connection_id, ckan_connection_id, ckan_package_id, pool, dataset_list), *args, **kwargs)
 
 
 class AirflowCPGPlugin(AirflowPlugin):
