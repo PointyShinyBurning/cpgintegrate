@@ -107,7 +107,7 @@ class CPGProcessorToXCom(CPGDatasetToXCom):
 
 
 class XComDatasetProcess(BaseOperator):
-    cols_always_present = [cpgintegrate.TIMESTAMP_FIELD_NAME, cpgintegrate.SOURCE_FIELD_NAME]
+    cols_always_present = [cpgintegrate.SOURCE_FIELD_NAME]
 
     @apply_defaults
     def __init__(self, post_processor=None, filter_cols=None, drop_na_cols=True,
