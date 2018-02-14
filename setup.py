@@ -3,7 +3,7 @@ import os
 
 setup(
     name="cpgintegrate",
-    version="0.2.13",
+    version="0.2.14SNAPSHOT",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -14,6 +14,7 @@ setup(
         'beautifulsoup4',
         'apache-airflow>=1.9.0',
         'lxml<4.0',
+        'numpy'
     ],
     extras_require={'dev': [
             'pytest>=3.2.2',
