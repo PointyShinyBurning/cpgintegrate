@@ -5,7 +5,7 @@ import numpy, itertools, io
 def to_frame(file):
     # Blood pressure results from file-ish object
 
-    file = file.read()
+    file = file.read().decode('utf-16')
 
     if file.startswith("Measurement"):
         # Format from new software in June 2017, harmonise to old format even though it's objectively worse
