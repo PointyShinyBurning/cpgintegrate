@@ -5,7 +5,7 @@ from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import requests
 import pandas
-
+import time
 
 class XComDatasetToCkan(BaseOperator):
 
@@ -68,12 +68,18 @@ class XComDatasetToCkan(BaseOperator):
 
             # Push metadata if exists'
             if hasattr(push_frame, 'get_json_column_info'):
-                datadict_res = requests.post(
-                    url=conn.host + '/api/3/action/datastore_create',
-                    data='{"resource_id":"%s", "force":"true","fields":%s}' %
-                         (res.json()['result']['id'], push_frame.get_json_column_info()),
-                    headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
-                )
+                while True:
+                    time.sleep(1)
+                    self.log.info("Trying Data Dictionary Push")
+                    datadict_res = requests.post(
+                        url=conn.host + '/api/3/action/datastore_create',
+                        data='{"resource_id":"%s", "force":"true","fields":%s}' %
+                             (res.json()['result']['id'], push_frame.get_json_column_info()),
+                        headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+                    )
+                    # Seems to 409 because too quick sometimes, keep trying in that case
+                    if datadict_res.status_code != 409:
+                        break
                 self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
                 assert datadict_res.status_code == 200
 
