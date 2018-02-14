@@ -1,5 +1,9 @@
 import pandas
-import numpy, itertools, io
+import numpy
+import itertools
+import io
+import cpgintegrate
+from cpgintegrate import ColumnInfoFrame
 
 
 def to_frame(file):
@@ -9,7 +13,7 @@ def to_frame(file):
 
     if file_as_string.startswith("Measurement"):
         # Format from new software in June 2017, harmonise to old format even though it's objectively worse
-        print("New format: %s" % file.name)
+        # print("New format: %s" % file.name)
         sheet = pandas.DataFrame(index=[0])
 
         data = pandas.read_csv(io.StringIO(file_as_string))
@@ -59,4 +63,9 @@ def to_frame(file):
     sheet['Irregular Hearbeats'] = len(data[data['Irregular Heartbeat (y or n)'] == 'y'].index)
     sheet['Excessive Movements'] = len(data[data['Excessive Movement (y or n)'] == 'y'].index)
 
-    return sheet
+    new_col_names = [col.split('(')[0].strip() for col in sheet.columns]
+    col_info = {new: {cpgintegrate.UNITS_ATTRIBUTE_NAME: old.split('(')[1]}
+                for old, new in zip(sheet.columns, new_col_names) if '(' in old}
+    sheet.columns = new_col_names
+
+    return ColumnInfoFrame(sheet,column_info=col_info)

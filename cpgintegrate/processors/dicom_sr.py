@@ -6,6 +6,7 @@ from lxml import etree
 from cpgintegrate import ColumnInfoFrame
 import cpgintegrate
 
+
 def to_frame(file):
     """Turns DICOM structured reports into dataframes.
 
@@ -49,7 +50,7 @@ def to_frame(file):
                 item_repeats[identifier] = 0
 
             if len(unit) and unit[0].text != 'no units':
-                f.column_info[identifier] = {cpgintegrate.UNITS_ATTRIBUTE_NAME:unit[0].text}
+                f.column_info[identifier] = {cpgintegrate.UNITS_ATTRIBUTE_NAME: unit[0].text}
 
             f[identifier] = value
 
