@@ -5,14 +5,14 @@ import numpy, itertools, io
 def to_frame(file):
     # Blood pressure results from file-ish object
 
-    file = file.read().decode('utf-16')
+    file_as_string = file.read().decode('utf-16')
 
-    if file.startswith("Measurement"):
+    if file_as_string.startswith("Measurement"):
         # Format from new software in June 2017, harmonise to old format even though it's objectively worse
         print("New format: %s" % file.name)
         sheet = pandas.DataFrame(index=[0])
 
-        data = pandas.read_csv(io.StringIO(file))
+        data = pandas.read_csv(io.StringIO(file_as_string))
         data.columns = (col.strip() for col in data.columns)
 
         # Extra variable because new version doesn't have seconds in timestamp
@@ -37,9 +37,9 @@ def to_frame(file):
 
         data.drop("Data & Alerts", axis=1, inplace=True)
     else:
-        sheet = pandas.DataFrame({"SubjectID": [file.splitlines()[0].split(",")[0]]})
+        sheet = pandas.DataFrame({"SubjectID": [file_as_string.splitlines()[0].split(",")[0]]})
 
-        data = pandas.read_csv(io.StringIO(file), skiprows=2)
+        data = pandas.read_csv(io.StringIO(file_as_string), skiprows=2)
 
     avgs = ['SYS (mmHg)', 'DIA (mmHg)']
 
