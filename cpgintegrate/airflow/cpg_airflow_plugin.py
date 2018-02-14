@@ -44,24 +44,24 @@ class XComDatasetToCkan(BaseOperator):
         # Find and use edits file if it's there
         try:
             edits = pandas.read_csv(requests.get(
-                url=next(res['url'] for res in existing_resource_list if res['name'] == source_task_id+"_edits"),
+                url=next(res['url'] for res in existing_resource_list if res['name'] == source_task_id + "_edits"),
                 headers={"Authorization": conn.get_password()}, stream=True).raw)
             self.log.info("Found edits file")
             for _, row in edits.iterrows():
                 try:
-                    push_frame.loc[push_frame[row.match_field] == row.match_value, row.target_field]\
+                    push_frame.loc[push_frame[row.match_field] == row.match_value, row.target_field] \
                         = row.get("target_value", None)
                 except KeyError:
                     print("Teleform edits error on %s , %s" % (row.field, row.value))
         except StopIteration:
             pass
 
-        if res_create or not(push_frame.equals(old_frame)):
+        if res_create or not (push_frame.equals(old_frame)):
             res = requests.post(
                 url=conn.host + url_ending,
                 data=request_data,
                 headers={"Authorization": conn.get_password()},
-                files={"upload": (source_task_id+".csv", push_frame.to_csv())},
+                files={"upload": (source_task_id + ".csv", push_frame.to_csv())},
             )
             self.log.info("HTTP Status Code: %s", res.status_code)
             assert res.status_code == 200
@@ -134,7 +134,7 @@ class XComDatasetProcess(BaseOperator):
         super().__init__(*args, **kwargs)
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
-            self.column_filter = {"items": filter_cols+self.cols_always_present}
+            self.column_filter = {"items": filter_cols + self.cols_always_present}
         elif type(filter_cols) == str:
             self.column_filter = {"regex": str}
         else:
@@ -143,9 +143,9 @@ class XComDatasetProcess(BaseOperator):
         self.drop_na_cols = drop_na_cols
 
     def execute(self, context):
-        out_frame = self.post_processor(context['ti'].xcom_pull(self.upstream_task_ids[0])
-                                        .filter(**self.column_filter)
-                                        .loc[lambda df: df.apply(self.row_filter, axis=1)])
+        out_frame = self.post_processor(*(
+            frame.filter(**self.column_filter).loc[lambda df: df.apply(self.row_filter, axis=1)]
+            for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
         if self.drop_na_cols:
             out_frame.dropna(axis=1, how='all', inplace=True)
         return out_frame
