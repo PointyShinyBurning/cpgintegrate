@@ -2,7 +2,7 @@ import pandas
 import numpy
 import itertools
 import io
-from . import brackets_frame_to_col_info
+from . import units_in_brackets_to_col_info
 
 
 def to_frame(file):
@@ -62,4 +62,4 @@ def to_frame(file):
     sheet['Irregular Hearbeats'] = len(data[data['Irregular Heartbeat (y or n)'] == 'y'].index)
     sheet['Excessive Movements'] = len(data[data['Excessive Movement (y or n)'] == 'y'].index)
 
-    return brackets_frame_to_col_info(sheet)
+    return units_in_brackets_to_col_info(sheet)

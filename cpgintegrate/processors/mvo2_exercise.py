@@ -3,7 +3,7 @@ import math
 import datetime
 from scipy import stats
 import numpy as np
-from . import brackets_frame_to_col_info
+from . import units_in_brackets_to_col_info
 
 
 def to_frame(file):
@@ -14,17 +14,18 @@ def to_frame(file):
     excel_file = pandas.ExcelFile(file)
     for r in ["A:B", "D:E", "G:H"]:
         sheet = sheet.append(excel_file.parse(0,
-                                              parse_cols=r,
+                                              usecols=r,
                                               index_col=None,
                                               header=None),
                              ignore_index=True
                              )
     sheet = sheet[sheet[0] == sheet[0]]
+    sheet.loc[sheet[0].str.endswith(":"), 0] = sheet.loc[sheet[0].str.endswith(":"), 0].str[:-1]
     sheet['i'] = 1
     sheet = sheet.drop_duplicates(0)
     sheet = sheet.pivot('i', 0, 1)
 
-    data = excel_file.parse(0, parse_cols="J:DX", index_col=None)
+    data = excel_file.parse(0, usecols="J:DX", index_col=None)
     data = data.drop(data.index[[0, 1]])
     data = data[data['t'] == data['t']]
 
@@ -52,13 +53,12 @@ def to_frame(file):
         except IndexError:
             pass
 
-    import numpy
     # ratios
     sheet['Min VE60secavg/VO260secavg(l/min)'] = (data.VE60secavg / data.VO260secavg).min()
     sheet['Min VE60secavg/VCO260secavg(l/min)'] = (data.VE60secavg / data.VCO260secavg).min()
     slope, _, r, _, _ = stats.linregress(data.VE60secavg, data.VCO260secavg)
     sheet['VE60secavg/VCO260secavg slope'] = slope
-    sheet['VE60secavg/VCO260secavg r^2'] = numpy.square(r)
+    sheet['VE60secavg/VCO260secavg r^2'] = np.square(r)
 
     # Max and min heartrates
     phases = [1, 3, 4]
@@ -77,16 +77,15 @@ def to_frame(file):
         phase3['L/min'] = [x / 1000 for x in phase3['VO2']]
         sheet['OUES'], _, _, _, _ = stats.linregress(phase3['Log VE'], phase3['L/min'])
 
-        # Append max variables
-    sheet['RER Phase 3'] = data[data['Phase'] == 3]['R'].max()
-    sheet['RER Phase 4'] = data[data['Phase'] == 4]['R'].max()
+    # Append max variables
+    for phase in [1, 2, 3]:
+        sheet['RER Phase %s' % phase] = data[data['Phase'] == phase]['R'].max()
+
     sheet['VE'] = data['VE'].max()
 
-    sheet['SubjectID'] = sheet['ID code:']
-
     # Drop step, spiro data (victims not equipped with it)
-    sheet.drop(['HR max (bpm):', 'User 1:', 'User 2:', 'User 3:',
-                'UN (g/day):', 'MVV (l/min):', 'FEV1 (l):', 'FVC (l):', 'PaCO2 @ peak (mmHg)',
-                'PaCO2 @ rest (mmHg)', 'PaO2 @ peak (mmHg)', 'PaO2 @ rest (mmHg)', 'First name:'], 1, inplace=True)
+    sheet.drop(['HR max (bpm)', 'User 1', 'User 2', 'User 3',
+                'UN (g/day)', 'MVV (l/min)', 'FEV1 (l)', 'FVC (l)', 'PaCO2 @ peak (mmHg)',
+                'PaCO2 @ rest (mmHg)', 'PaO2 @ peak (mmHg)', 'PaO2 @ rest (mmHg)', 'First name'], 1, inplace=True)
 
-    return brackets_frame_to_col_info(sheet)
+    return units_in_brackets_to_col_info(sheet.set_index('ID code'))
