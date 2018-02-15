@@ -5,7 +5,7 @@ from scipy import stats
 import numpy as np
 
 
-def process(file):
+def to_frame(file):
     # Eats some bytes and spits out exercise test results
     # print("Processing:" + fileName + "(" + subjectID + ")")
 
