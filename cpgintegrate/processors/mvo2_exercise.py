@@ -3,6 +3,7 @@ import math
 import datetime
 from scipy import stats
 import numpy as np
+from . import brackets_frame_to_col_info
 
 
 def to_frame(file):

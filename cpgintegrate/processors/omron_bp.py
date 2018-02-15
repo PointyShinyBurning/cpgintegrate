@@ -2,8 +2,7 @@ import pandas
 import numpy
 import itertools
 import io
-import cpgintegrate
-from cpgintegrate import ColumnInfoFrame
+from . import brackets_frame_to_col_info
 
 
 def to_frame(file):
