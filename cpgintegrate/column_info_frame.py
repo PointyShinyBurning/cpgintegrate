@@ -24,11 +24,11 @@ class ColumnInfoFrame(DataFrame):
         """propagate metadata from other to self """
         if method == 'concat':
             for obj in other.objs:
-                if hasattr(obj, 'column_info'):
-                    self._column_info.update(obj.column_info)
+                if hasattr(obj, '_column_info'):
+                    self._column_info.update(obj._column_info)
         else:
-            if hasattr(other, 'column_info'):
-                self._column_info.update(other.column_info)
+            if hasattr(other, '_column_info'):
+                self._column_info.update(other._column_info)
         return self
 
     def get_json_column_info(self):
