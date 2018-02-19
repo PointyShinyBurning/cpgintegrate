@@ -32,17 +32,16 @@ class ColumnInfoFrame(DataFrame):
         return self
 
     def get_json_column_info(self):
-        return json.dumps([
+        return json.dumps(self.get_column_info())
+
+    def get_column_info(self):
+        return [
             {**{"id": col_name}, **({"info": self.column_info[col_name]} if col_name in self.column_info else {})}
             for col_name in [self.index.name or ""]+list(self.columns)
-        ])
-
-    def save_json_column_info(self, file_path):
-        with open(file_path, 'w') as out_file:
-            out_file.write(self.get_json_column_info())
+        ]
 
     def equals(self, other):
         try:
-            (other.get_json_column_info() == self.get_json_column_info()) and super().equals(other)
+            (other.get_column_info() == self.get_column_info()) and super().equals(other)
         except AttributeError:
             return False
