@@ -45,6 +45,9 @@ class ColumnInfoFrame(DataFrame):
         copy._column_info = column_info
         return copy
 
+    def add_column_info(self, col_name, info):
+        self._column_info[col_name].update(info)
+
     def equals(self, other):
         try:
             (other.get_column_info() == self.get_column_info()) and super().equals(other)
