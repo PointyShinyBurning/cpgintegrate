@@ -46,7 +46,10 @@ class ColumnInfoFrame(DataFrame):
         return copy
 
     def add_column_info(self, col_name, info):
-        self._column_info[col_name].update(info)
+        if col_name in self._column_info.keys():
+            self._column_info[col_name].update(info)
+        else:
+            self._column_info[col_name] = info
 
     def equals(self, other):
         try:
