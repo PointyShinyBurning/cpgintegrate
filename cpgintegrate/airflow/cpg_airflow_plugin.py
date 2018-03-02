@@ -1,4 +1,4 @@
-from airflow.models import BaseOperator, DAG
+from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
@@ -6,6 +6,7 @@ import cpgintegrate
 import requests
 import pandas
 import time
+
 
 class XComDatasetToCkan(BaseOperator):
 
