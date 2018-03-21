@@ -89,7 +89,10 @@ class OpenClinica(FileDownloadingConnector):
 
         def item_col_name(item_data):
             return "_".join(
-                filter(None, [item_data.attrib['ItemOID'], item_data.getparent().attrib.get('ItemGroupRepeatKey')]))
+                filter(None, [
+                    self.xml.xpath("./default:Study/default:MetaDataVersion/default:ItemDef[@OID='%s']"
+                                   % item_data.attrib['ItemOID'], namespaces=self.nsmap)[0].attrib['Name'],
+                    item_data.getparent().attrib.get('ItemGroupRepeatKey')]))
 
         def form_to_dict(form):
             def item_group_listize(item_group):
