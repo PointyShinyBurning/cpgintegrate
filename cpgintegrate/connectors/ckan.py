@@ -1,6 +1,7 @@
 import pandas
 import requests
 from .connector import Connector
+import cpgintegrate
 
 
 class CKAN(Connector):
@@ -19,5 +20,6 @@ class CKAN(Connector):
 
         resource_url = next(res['url'] for res in resource_list if res['name'] == resource or res['id'] == resource)
 
-        return pandas.read_csv(requests.get(resource_url, headers={"Authorization": self.auth},
-                                                      stream=True).raw)
+        return (pandas
+                .read_csv(requests.get(resource_url, headers={"Authorization": self.auth}, stream=True).raw)
+                .assign(**{cpgintegrate.SOURCE_FIELD_NAME: resource_url}))

@@ -4,7 +4,6 @@ from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import requests
-import pandas
 import time
 
 
@@ -41,21 +40,6 @@ class XComDatasetToCkan(BaseOperator):
             url_ending = '/api/3/action/resource_create'
             self.log.info("Creating resource %s", source_task_id)
             res_create = True
-
-        # Find and use edits file if it's there
-        try:
-            edits = pandas.read_csv(requests.get(
-                url=next(res['url'] for res in existing_resource_list if res['name'] == source_task_id + "_edits"),
-                headers={"Authorization": conn.get_password()}, stream=True).raw)
-            self.log.info("Found edits file")
-            for _, row in edits.iterrows():
-                try:
-                    push_frame.loc[push_frame[row.match_field] == row.match_value, row.target_field] \
-                        = row.get("target_value", None)
-                except KeyError:
-                    print("Teleform edits error on %s , %s" % (row.field, row.value))
-        except StopIteration:
-            pass
 
         if res_create or not (push_frame.equals(old_frame)):
             res = requests.post(

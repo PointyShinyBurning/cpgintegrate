@@ -21,3 +21,13 @@ def test_match_indices_missing():
             pandas.DataFrame(index=pandas.Index(['a123_I', '4a5b6c', '789', '111pol*()'])),
             pandas.DataFrame(index=pandas.Index(['e123_P', 'abc456', '789', '91011']))
         )
+
+
+def test_edit_using():
+    assert cpgintegrate.processors.utils.edit_using(
+        pandas.DataFrame({"A":[1,2,3], "B":[4,5,6]}),
+        pandas.DataFrame({"match_field": ["A", "B"],
+                          "match_value": [1, 5],
+                          "target_field": ["B", "A"],
+                          "target_value": [100, 500]})
+    ).equals(pandas.DataFrame({"A": [1, 500, 3], "B": [100, 5, 6]}))

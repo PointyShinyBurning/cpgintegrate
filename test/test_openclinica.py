@@ -1,4 +1,4 @@
-from cpgintegrate.connectors import OpenClinica
+from cpgintegrate.connectors.openclinica import OpenClinica
 import pkg_resources
 import pandas
 

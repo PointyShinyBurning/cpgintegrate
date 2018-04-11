@@ -7,6 +7,8 @@ import uuid
 def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
                   index_transform: Callable = lambda x: int(re.compile(r'[^\d]+').sub("", x))) -> pandas.DataFrame:
     """
+    Replace index values in a frame by searching using transformed index in another
+
     Replace indices of match_from with those found in match_to when both are transformed using index_transform.
     KeyError if any index of match_from is missing.
 
@@ -26,3 +28,21 @@ def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
     )
     assert not matched.index.isnull().any()
     return matched
+
+
+def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pandas.DataFrame:
+    """
+    Edit DataFrame using list of edits in another DataFrame.
+
+    Alters each target_field value in frame_to_edit to target_value where match_field == match_value
+    :param frame_to_edit: DataFrame to edit
+    :param edits: DataFrame with edits in columns match_field, match_value, target_field, target_value, comment
+    :return:
+    """
+    for _, row in edits.iterrows():
+        try:
+            frame_to_edit.loc[frame_to_edit[row.match_field] == row.match_value, row.target_field] \
+                = row.get("target_value", None)
+        except KeyError:
+            print("Edits error on %s , %s" % (row.field, row.value))
+    return frame_to_edit
