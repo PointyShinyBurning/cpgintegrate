@@ -27,7 +27,8 @@ def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
     matched = match_from.set_index(
         match_from
         .assign(**{'transformed_index': lambda df: df.index.map(index_transform)})
-        .join(match_in_reindexed, on='transformed_index').set_index('orig_index').index
+        .join(match_in_reindexed, on='transformed_index')
+        .set_index('orig_index').rename_axis(match_from.index.name).index
     )
     assert not matched.index.isnull().any()
     return matched
