@@ -18,6 +18,7 @@ def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
     :return:
     """
     match_in_reindexed = (match_in
+                          .drop(columns=match_in.columns)
                           .assign(orig_index=lambda df: df.index)
                           .pipe(lambda df: df.set_index(df.index.map(index_transform)))
                           # Only want one row for each transformed index to avoid multiplying rows in match_from frame
