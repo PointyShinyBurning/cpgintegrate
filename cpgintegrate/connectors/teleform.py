@@ -1,7 +1,7 @@
 import pandas
 import sqlalchemy
 from .connector import Connector
-
+import cpgintegrate
 
 class Teleform(Connector):
 
@@ -9,10 +9,9 @@ class Teleform(Connector):
         super().__init__(**kwargs)
         self.dbString = 'postgresql://%s:%s@%s:%s/%s' % (auth[0], auth[1], host, port, schema)
 
-    def _read_dataset(self, tbl,):
+    def _read_dataset(self, tbl, index_col='StudyID'):
         engine = sqlalchemy.create_engine(self.dbString)
 
         frame = pandas.read_sql_table(tbl, engine, parse_dates={}, coerce_float=False)
 
-        frame.index = frame.StudyID
-        return frame
+        return frame.set_index(index_col)

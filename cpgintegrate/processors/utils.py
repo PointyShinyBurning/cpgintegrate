@@ -1,3 +1,4 @@
+import uuid
 from typing import Callable
 import pandas
 import re
@@ -40,10 +41,20 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
     :param edits: DataFrame with edits in columns match_field, match_value, target_field, target_value, comment
     :return:
     """
+    # Use temporary name to avoid clobbering any existing column
+
+    temp_col_name = None
+    if frame_to_edit.index.name in edits.target_field.values:
+        temp_col_name = str(uuid.uuid4())
+        orig_index_name = frame_to_edit.index.name
+        frame_to_edit[temp_col_name] = frame_to_edit.index
+        edits.loc[edits.target_field == orig_index_name, 'target_field'] = temp_col_name
     for _, row in edits.iterrows():
         try:
             frame_to_edit.loc[frame_to_edit[row.match_field] == row.match_value, row.target_field] \
                 = row.get("target_value", None)
         except KeyError:
             print("Edits error on %s , %s" % (row.field, row.value))
+    if temp_col_name:
+        return frame_to_edit.set_index(temp_col_name).rename_axis(orig_index_name)
     return frame_to_edit
