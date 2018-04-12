@@ -53,6 +53,7 @@ class XComDatasetToCkan(BaseOperator):
 
             # Push metadata if exists'
             if hasattr(push_frame, 'get_json_column_info'):
+                datadict_res = None
                 tries_left = 60
                 while tries_left > 0:
                     time.sleep(1)
@@ -123,7 +124,16 @@ class XComDatasetProcess(BaseOperator):
 
     @apply_defaults
     def __init__(self, post_processor=None, filter_cols=None, drop_na_cols=True,
-                 row_filter=lambda row: True, groupby=None, agg=None, *args, **kwargs):
+                 row_filter=lambda row: True, keep_duplicates=None, *args, **kwargs):
+        """
+        Post processing on DataFrames from ancestor XCOMs
+
+        :param post_processor: function to apply with all ancestor xcoms as arguements
+        :param filter_cols: list or str to translate as regex
+        :param drop_na_cols: boolean to drop columns left na by post processing
+        :param row_filter: filter out rows where this returns true
+        :param keep_duplicates: 'last', 'first' to keep those duplicates indices or False for none of them
+        """
         super().__init__(*args, **kwargs)
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
@@ -134,8 +144,7 @@ class XComDatasetProcess(BaseOperator):
             self.column_filter = {"regex": ".*"}
         self.row_filter = row_filter
         self.drop_na_cols = drop_na_cols
-        self.groupby = groupby
-        self.agg = agg
+        self.keep_duplicates = keep_duplicates
 
     def execute(self, context):
         out_frame = self.post_processor(*(
@@ -143,8 +152,8 @@ class XComDatasetProcess(BaseOperator):
             for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
         if self.drop_na_cols:
             out_frame.dropna(axis=1, how='all', inplace=True)
-        if self.groupby:
-            return out_frame.groupby(self.groupby).agg(self.agg)
+        if self.keep_duplicates:
+            out_frame = out_frame.loc[~out_frame.index.duplicated(keep=self.keep_duplicates)]
         return out_frame
 
 
