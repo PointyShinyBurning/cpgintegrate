@@ -123,7 +123,7 @@ class XComDatasetProcess(BaseOperator):
 
     @apply_defaults
     def __init__(self, post_processor=None, filter_cols=None, drop_na_cols=True,
-                 row_filter=lambda row: True, *args, **kwargs):
+                 row_filter=lambda row: True, groupby=None, agg=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
@@ -134,6 +134,8 @@ class XComDatasetProcess(BaseOperator):
             self.column_filter = {"regex": ".*"}
         self.row_filter = row_filter
         self.drop_na_cols = drop_na_cols
+        self.groupby = groupby
+        self.agg = agg
 
     def execute(self, context):
         out_frame = self.post_processor(*(
@@ -141,6 +143,8 @@ class XComDatasetProcess(BaseOperator):
             for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
         if self.drop_na_cols:
             out_frame.dropna(axis=1, how='all', inplace=True)
+        if self.groupby:
+            return out_frame.groupby(self.groupby).agg(self.agg)
         return out_frame
 
 
