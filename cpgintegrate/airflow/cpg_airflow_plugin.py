@@ -115,7 +115,7 @@ class CPGProcessorToXCom(CPGDatasetToXCom):
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
                                processor_instance)
-                .drop([] if self.file_subject_id else ["FileSubjectID"], axis=1))
+                .drop([] if self.file_subject_id else [cpgintegrate.FILE_SUBJECT_ID_FIELD_NAME], axis=1))
 
 
 class XComDatasetProcess(BaseOperator):
