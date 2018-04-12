@@ -53,7 +53,8 @@ class XComDatasetToCkan(BaseOperator):
 
             # Push metadata if exists'
             if hasattr(push_frame, 'get_json_column_info'):
-                while True:
+                tries_left = 60
+                while tries_left > 0:
                     time.sleep(1)
                     self.log.info("Trying Data Dictionary Push")
                     datadict_res = requests.post(
@@ -62,6 +63,7 @@ class XComDatasetToCkan(BaseOperator):
                              (res.json()['result']['id'], push_frame.get_json_column_info()),
                         headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
                     )
+                    tries_left -= 1
                     # Seems to 409 because too quick sometimes, keep trying in that case
                     if datadict_res.status_code != 409:
                         break
