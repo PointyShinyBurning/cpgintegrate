@@ -129,7 +129,7 @@ class XComDatasetProcess(BaseOperator):
         if type(filter_cols) == list:
             self.column_filter = {"items": filter_cols + self.cols_always_present}
         elif type(filter_cols) == str:
-            self.column_filter = {"regex": str}
+            self.column_filter = {"regex": filter_cols}
         else:
             self.column_filter = {"regex": ".*"}
         self.row_filter = row_filter
