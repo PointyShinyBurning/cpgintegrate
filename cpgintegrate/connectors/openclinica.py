@@ -67,15 +67,16 @@ class OpenClinica(FileDownloadingConnector):
                             "/d:ItemData[@ItemOID = '%s']"
                             % item_oid)
         for item in items:
-            resp = self.session.get(self.base_url + "/DownloadAttachedFile", stream=True,
-                                    params={'fileName': item.attrib['Value']})
-            file_like = resp.raw
-            file_like.decode_content = True
-            file_like.name = resp.url
-            setattr(file_like, cpgintegrate.SUBJECT_ID_ATTR,
-                    item.xpath('ancestor::d:SubjectData', namespaces=self.nsmap)[0]
-                    .get('{%s}StudySubjectID' % self.nsmap['OpenClinica']))
-            yield file_like
+            if item.attrib['Value'] != "":
+                resp = self.session.get(self.base_url + "/DownloadAttachedFile", stream=True,
+                                        params={'fileName': item.attrib['Value']})
+                file_like = resp.raw
+                file_like.decode_content = True
+                file_like.name = resp.url
+                setattr(file_like, cpgintegrate.SUBJECT_ID_ATTR,
+                        item.xpath('ancestor::d:SubjectData', namespaces=self.nsmap)[0]
+                        .get('{%s}StudySubjectID' % self.nsmap['OpenClinica']))
+                yield file_like
 
     def list_datasets(self) -> set:
         if self.xml:
