@@ -24,14 +24,14 @@ def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
                           # Only want one row for each transformed index to avoid multiplying rows in match_from frame
                           .groupby(level=0)
                           .first())
-    matched = match_from.set_index(
+    matched = (
         match_from
         .assign(**{'transformed_index': lambda df: df.index.map(index_transform)})
         .join(match_in_reindexed, on='transformed_index')
-        .set_index('orig_index').rename_axis(match_from.index.name).index
     )
-    assert not matched.index.isnull().any()
-    return matched
+    assert not matched.orig_index.isnull().any(), "Bad IDs {0}".format(matched.loc[matched.orig_index.isnull(),
+                                                                                   'transformed_index'])
+    return match_from.set_index(matched.set_index('orig_index').rename_axis(match_from.index.name).index)
 
 
 def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pandas.DataFrame:
