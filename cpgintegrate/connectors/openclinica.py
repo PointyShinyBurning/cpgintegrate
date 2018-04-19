@@ -157,7 +157,8 @@ class OpenClinica(FileDownloadingConnector):
                 .assign(**{cpgintegrate.SOURCE_FIELD_NAME: lambda frame: source_from_frame(frame)})
                 .set_index('SubjectData:StudySubjectID', drop=True)
                 .loc[:, lambda f: sorted([col for col in f.columns if
-                                          (col in list(column_info.keys()) + [
-                                              'FormData:Version']) or include_meta_columns],
+                                          (col in list(column_info.keys()) +
+                                           ['FormData:Version', cpgintegrate.SOURCE_FIELD_NAME])
+                                          or include_meta_columns],
                                          key=lambda col: column_order.get(col, 0))]
                 )
