@@ -1,9 +1,10 @@
 from cpgintegrate.column_info_frame import ColumnInfoFrame
 import cpgintegrate
+from collections import OrderedDict
 
 
 def to_frame(file):
-    data = {}
+    data = OrderedDict()
     col_info = {}
 
     pairs = [(line[3:7], line[7:]) for line
