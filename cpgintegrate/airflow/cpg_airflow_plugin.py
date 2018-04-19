@@ -53,11 +53,24 @@ class XComDatasetToCkan(BaseOperator):
 
             # Push metadata if exists'
             if hasattr(push_frame, 'get_json_column_info'):
+
                 datadict_res = None
                 tries_left = 60
+
                 while tries_left > 0:
                     time.sleep(1)
                     self.log.info("Trying Data Dictionary Push")
+
+                    existing_dict = requests.post(
+                        url=conn.host + '/api/3/action/datastore_search',
+                        data='{"resource_id":"%s"}' % res.json()['result']['id'],
+                        headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+                    ).json()['result']['fields']
+
+                    for col in existing_dict:
+                        if col['id'] in push_frame.columns:
+                            push_frame.add_column_info(col['id'], col['info'])
+
                     datadict_res = requests.post(
                         url=conn.host + '/api/3/action/datastore_create',
                         data='{"resource_id":"%s", "force":"true","fields":%s}' %
