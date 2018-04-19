@@ -14,4 +14,5 @@ class Teleform(Connector):
 
         frame = pandas.read_sql_table(tbl, engine, parse_dates={}, coerce_float=False)
 
-        return frame.set_index(index_col)
+        return frame.set_index(index_col).assign(
+            **{cpgintegrate.SOURCE_FIELD_NAME: engine.url.__to_string__(True)+'/'+tbl})
