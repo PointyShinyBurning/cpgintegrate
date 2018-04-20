@@ -68,7 +68,7 @@ class XComDatasetToCkan(BaseOperator):
                     ).json()['result']['fields']
 
                     for col in existing_dict:
-                        if col['id'] in push_frame.columns:
+                        if col['id'] in push_frame.columns and 'info' in col.keys():
                             push_frame.add_column_info(col['id'], col['info'])
 
                     datadict_res = requests.post(
