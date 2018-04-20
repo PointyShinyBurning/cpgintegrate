@@ -4,7 +4,8 @@ from airflow.hooks.base_hook import BaseHook
 from airflow.plugins_manager import AirflowPlugin
 import cpgintegrate
 import requests
-import time
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 
 class XComDatasetToCkan(BaseOperator):
@@ -54,33 +55,37 @@ class XComDatasetToCkan(BaseOperator):
             # Push metadata if exists'
             if hasattr(push_frame, 'get_json_column_info'):
 
-                datadict_res = None
-                tries_left = 60
+                self.log.info("Trying Data Dictionary Push")
 
-                while tries_left > 0:
-                    time.sleep(1)
-                    self.log.info("Trying Data Dictionary Push")
+                push_sess = requests.Session()
+                push_sess.mount(conn.host, HTTPAdapter(
+                    max_retries=Retry(status_forcelist=[409], total=60, backoff_factor=0.1)))
 
-                    existing_dict = requests.post(
-                        url=conn.host + '/api/3/action/datastore_search',
-                        data='{"resource_id":"%s"}' % res.json()['result']['id'],
-                        headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
-                    ).json()['result']['fields']
+                existing_dict_resp = push_sess.post(
+                    url=conn.host + '/api/3/action/datastore_search',
+                    data='{"resource_id":"%s"}' % res.json()['result']['id'],
+                    headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+                )
 
-                    for col in existing_dict:
-                        if col['id'] in push_frame.columns and 'info' in col.keys():
-                            push_frame.add_column_info(col['id'], col['info'])
+                self.log.info("Data Dictionary Fetch Status Code: %s", existing_dict_resp.status_code)
+                assert existing_dict_resp.status_code == 200
 
-                    datadict_res = requests.post(
-                        url=conn.host + '/api/3/action/datastore_create',
-                        data='{"resource_id":"%s", "force":"true","fields":%s}' %
-                             (res.json()['result']['id'], push_frame.get_json_column_info()),
-                        headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
-                    )
-                    tries_left -= 1
-                    # Seems to 409 because too quick sometimes, keep trying in that case
-                    if datadict_res.status_code != 409:
-                        break
+                existing_dict = existing_dict_resp.json()['result']['fields']
+
+                for col in existing_dict:
+                    if col['id'] in push_frame.columns and 'info' in col.keys():
+                        push_frame.add_column_info(col['id'], col['info'])
+
+                push_sess = requests.Session()
+                push_sess.mount(conn.host, HTTPAdapter(max_retries=Retry(status_forcelist=[409], total=60)))
+
+                datadict_res = push_sess.post(
+                    url=conn.host + '/api/3/action/datastore_create',
+                    data='{"resource_id":"%s", "force":"true","fields":%s}' %
+                         (res.json()['result']['id'], push_frame.get_json_column_info()),
+                    headers={"Authorization": conn.get_password(), "Content-Type": "application/json"},
+                )
+
                 self.log.info("Data Dictionary Push Status Code: %s", datadict_res.status_code)
                 assert datadict_res.status_code == 200
 
