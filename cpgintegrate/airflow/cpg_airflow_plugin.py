@@ -11,10 +11,11 @@ from requests.packages.urllib3.util.retry import Retry
 class XComDatasetToCkan(BaseOperator):
 
     @apply_defaults
-    def __init__(self, ckan_connection_id, ckan_package_id, *args, **kwargs):
+    def __init__(self, ckan_connection_id, ckan_package_id, push_data_dictionary=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ckan_connection_id = ckan_connection_id
         self.ckan_package_id = ckan_package_id
+        self.push_data_dictionary = push_data_dictionary
 
     def execute(self, context):
 
@@ -53,7 +54,7 @@ class XComDatasetToCkan(BaseOperator):
             assert res.status_code == 200
 
             # Push metadata if exists'
-            if hasattr(push_frame, 'get_json_column_info'):
+            if hasattr(push_frame, 'get_json_column_info') and self.push_data_dictionary:
 
                 self.log.info("Trying Data Dictionary Push")
 
