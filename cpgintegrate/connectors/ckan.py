@@ -2,16 +2,29 @@ import pandas
 import requests
 from .connector import Connector
 import cpgintegrate
+from pathlib import Path
+import os
+from typing import Union, Tuple
 
 
 class CKAN(Connector):
 
-    def __init__(self, auth: (str, str), host, **kwargs):
-        super().__init__(**kwargs)
-        self.auth = auth[1]
+    def __init__(self, host="https://localhost/ckan", auth: Union[str, Tuple[str, str], None]=None):
+        """
+        CKAN API Key will be read from ~/ckan_api_key file if auth not given
+
+        :param host: Base url of ckan instance
+        :param auth: CKAN API Key from users ckan home page, as string or second element of tuple
+        """
+        if type(auth) == str:
+            self.auth = auth
+        elif type(auth) == tuple:
+            self.auth = auth[1]
+        else:
+            self.auth = open(os.path.join(Path.home(), '.ckan_api_key')).read()
         self.host = host
 
-    def _read_dataset(self, dataset, resource, index_col=cpgintegrate.SUBJECT_ID_FIELD_NAME) -> pandas.DataFrame:
+    def get_dataset(self, dataset, resource, index_col=cpgintegrate.SUBJECT_ID_FIELD_NAME) -> pandas.DataFrame:
         resource_list = requests.get(
             url=self.host + '/api/3/action/package_show',
             headers={"Authorization": self.auth},
@@ -23,4 +36,5 @@ class CKAN(Connector):
         return (pandas
                 .read_csv(requests.get(resource_url, headers={"Authorization": self.auth}, stream=True).raw)
                 .assign(**{cpgintegrate.SOURCE_FIELD_NAME: resource_url})
-                .pipe(lambda df: df.set_index(index_col) if index_col and index_col in df.columns else df))
+                .pipe(lambda df: df.set_index(index_col) if index_col and index_col in df.columns else df)
+                )

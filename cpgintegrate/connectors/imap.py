@@ -8,21 +8,17 @@ import io
 
 class IMAP(FileDownloadingConnector):
 
-    def __init__(self, host,  auth: (str, str), **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, host,  auth: (str, str)):
         self.host = host
         self.auth = auth
         self.mail = None
 
-    def _read_dataset(self, mailbox, folder) -> pandas.DataFrame:
+    def get_dataset(self, mailbox, folder):
         self.mail = imaplib.IMAP4_SSL(self.host)
         self.mail.login(self.auth[0] + '\\' + mailbox, self.auth[1])
         self.mail.select(folder, readonly=True)
         result, data = self.mail.uid('search', None, 'ALL')
         return pandas.DataFrame({'uid': data[0].split()})
-
-    def get_dataset(self, *args, **kwargs):
-        return self._read_dataset(*args, **kwargs)
 
     def iter_files(self, mailbox, folder) -> typing.Iterator[typing.IO]:
         """

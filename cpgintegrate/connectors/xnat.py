@@ -8,14 +8,13 @@ import cpgintegrate
 
 class XNAT(FileDownloadingConnector):
 
-    def __init__(self, schema: str, auth: (str, str), host="https://localhost/xnat", **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, schema: str, auth: (str, str), host="https://localhost/xnat"):
         self.base_url = host
         self.project_id = schema
         self.session = requests.session()
         self.auth = auth
 
-    def _read_dataset(self) -> pandas.DataFrame:
+    def get_dataset(self) -> pandas.DataFrame:
         url = "/data/archive/projects/" + self.project_id + "/experiments"
 
         payload = {'guiStyle': 'true',
@@ -24,7 +23,8 @@ class XNAT(FileDownloadingConnector):
                               "xnat:imageSessionData/scanner"
                    }
 
-        return self._get_result_set(url, payload).set_index("subject_label")
+        return (self._get_result_set(url, payload).set_index("subject_label")
+                .rename_axis(cpgintegrate.SUBJECT_ID_FIELD_NAME))
 
     def iter_files(self, experiment_selector=lambda x: True,
                    scan_selector=lambda x: True,

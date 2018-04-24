@@ -13,8 +13,7 @@ from io import BytesIO
 class OpenClinica(FileDownloadingConnector):
 
     def __init__(self, schema: str, auth: (str, str) = None, xml_path: str = None, dataset_id: int = None,
-                 host='http://localhost/OpenClinica', **kwargs):
-        super().__init__(**kwargs)
+                 host='http://localhost/OpenClinica'):
         self.base_url = host
         self.study_oid = schema
 
@@ -88,7 +87,7 @@ class OpenClinica(FileDownloadingConnector):
                         .json()['Study']['MetaDataVersion']['FormDef']
                     }
 
-    def _read_dataset(self, form_oid_prefix: str = "", include_meta_columns=False):
+    def get_dataset(self, form_oid_prefix: str = "", include_meta_columns=False):
 
         def item_col_name(item_data):
             return "_".join(
@@ -161,4 +160,5 @@ class OpenClinica(FileDownloadingConnector):
                                            ['FormData:Version', cpgintegrate.SOURCE_FIELD_NAME])
                                           or include_meta_columns],
                                          key=lambda col: column_order.get(col, 0))]
+                .rename_axis(cpgintegrate.SUBJECT_ID_FIELD_NAME)
                 )
