@@ -53,5 +53,5 @@ class CKAN(FileDownloadingConnector):
         for resource in resource_list:
             if resource_selector(resource):
                 file = requests.get(resource['url'], headers={"Authorization": self.auth}, stream=True).raw
-                setattr(file, cpgintegrate.SOURCE_FIELD_NAME, resource['url'])
+                setattr(file, 'name', resource['url'])
                 yield file
