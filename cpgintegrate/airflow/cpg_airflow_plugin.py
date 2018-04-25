@@ -6,7 +6,7 @@ import cpgintegrate
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-
+import csv
 
 class XComDatasetToCkan(BaseOperator):
 
@@ -48,7 +48,7 @@ class XComDatasetToCkan(BaseOperator):
                 url=conn.host + url_ending,
                 data=request_data,
                 headers={"Authorization": conn.get_password()},
-                files={"upload": (source_task_id + ".csv", push_frame.to_csv())},
+                files={"upload": (source_task_id + ".csv", push_frame.to_csv(quoting=csv.QUOTE_NONNUMERIC))},
             )
             self.log.info("HTTP Status Code: %s", res.status_code)
             assert res.status_code == 200
