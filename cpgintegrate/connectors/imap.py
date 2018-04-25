@@ -8,7 +8,8 @@ import io
 
 class IMAP(FileDownloadingConnector):
 
-    def __init__(self, host,  auth: (str, str)):
+    def __init__(self, host, auth: (str, str), **kwargs):
+        super().__init__(**kwargs)
         self.host = host
         self.auth = auth
         self.mail = None

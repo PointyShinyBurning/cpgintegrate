@@ -9,13 +9,15 @@ from typing import Union, Tuple
 
 class CKAN(Connector):
 
-    def __init__(self, host="https://localhost/ckan", auth: Union[str, Tuple[str, str], None]=None):
+    def __init__(self, host="https://localhost/ckan", auth: Union[str, Tuple[str, str], None]=None, **kwargs):
+
         """
         CKAN API Key will be read from ~/ckan_api_key file if auth not given
 
         :param host: Base url of ckan instance
         :param auth: CKAN API Key from users ckan home page, as string or second element of tuple
         """
+        super().__init__(**kwargs)
         if type(auth) == str:
             self.auth = auth
         elif type(auth) == tuple:

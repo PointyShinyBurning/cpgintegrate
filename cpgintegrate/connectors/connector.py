@@ -6,6 +6,10 @@ import cpgintegrate
 
 class Connector(ABC):
 
+    def __init__(self, **kwargs):
+        # Sink for **vars(conn) and **conn.extra_dejson in cpg_airflow_plugin.py that Connector doesn't use
+        pass
+
     @abstractmethod
     def get_dataset(self, *args, **kwargs) -> pandas.DataFrame:
         pass

@@ -13,7 +13,8 @@ from io import BytesIO
 class OpenClinica(FileDownloadingConnector):
 
     def __init__(self, schema: str, auth: (str, str) = None, xml_path: str = None, dataset_id: int = None,
-                 host='http://localhost/OpenClinica'):
+                 host='http://localhost/OpenClinica', **kwargs):
+        super().__init__(**kwargs)
         self.base_url = host
         self.study_oid = schema
 

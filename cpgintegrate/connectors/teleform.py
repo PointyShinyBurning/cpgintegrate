@@ -6,7 +6,8 @@ import cpgintegrate
 
 class Teleform(Connector):
 
-    def __init__(self, auth=("", ""), schema="postgres", port=5432, host='localhost'):
+    def __init__(self, auth=("", ""), schema="postgres", port=5432, host='localhost', **kwargs):
+        super().__init__(**kwargs)
         self.dbString = 'postgresql://%s:%s@%s:%s/%s' % (auth[0], auth[1], host, port, schema)
 
     def get_dataset(self, tbl, index_col='StudyID'):
