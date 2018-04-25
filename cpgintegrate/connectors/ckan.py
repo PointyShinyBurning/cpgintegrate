@@ -1,13 +1,15 @@
+import typing
+
 import pandas
 import requests
-from .connector import Connector
+from .connector import FileDownloadingConnector
 import cpgintegrate
 from pathlib import Path
 import os
 from typing import Union, Tuple
 
 
-class CKAN(Connector):
+class CKAN(FileDownloadingConnector):
 
     def __init__(self, host="https://localhost/ckan", auth: Union[str, Tuple[str, str], None]=None, **kwargs):
 
@@ -40,3 +42,15 @@ class CKAN(Connector):
                 .assign(**{cpgintegrate.SOURCE_FIELD_NAME: resource_url})
                 .pipe(lambda df: df.set_index(index_col) if index_col and index_col in df.columns else df)
                 )
+
+    def iter_files(self, dataset, resource_selector=lambda x: True) -> typing.Iterator[typing.IO]:
+        resource_list = requests.get(
+            url=self.host + '/api/3/action/package_show',
+            headers={"Authorization": self.auth},
+            params={"id": dataset},
+        ).json()['result']['resources']
+
+        for resource in resource_list:
+            file = requests.get(resource['url'], headers={"Authorization": self.auth}, stream=True).raw
+            setattr(file, cpgintegrate.SOURCE_FIELD_NAME, resource['url'])
+            yield file
