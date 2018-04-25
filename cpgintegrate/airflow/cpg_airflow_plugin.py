@@ -78,9 +78,6 @@ class XComDatasetToCkan(BaseOperator):
                     if col['id'] in push_frame.columns and 'info' in col.keys():
                         push_frame.add_column_info(col['id'], col['info'])
 
-                push_sess = requests.Session()
-                push_sess.mount(conn.host, HTTPAdapter(max_retries=Retry(status_forcelist=[409], total=60)))
-
                 datadict_res = push_sess.post(
                     url=conn.host + '/api/3/action/datastore_create',
                     data='{"resource_id":"%s", "force":"true","fields":%s}' %
