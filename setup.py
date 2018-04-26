@@ -12,13 +12,13 @@ setup(
         'xlrd',
         'sqlalchemy>=1.0',
         'beautifulsoup4',
-        'apache-airflow>=1.9.0',
         'lxml<4.0',
         'numpy',
         'scipy',
     ],
     extras_require={'dev': [
             'pytest>=3.2.2',
+            'apache-airflow>=1.9.0',
         ]
                     },
     data_files=[
