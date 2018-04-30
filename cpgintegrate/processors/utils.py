@@ -46,6 +46,7 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
     # Use temporary name to avoid clobbering any existing column
 
     temp_col_name = None
+    orig_index_name = None
     if frame_to_edit.index.name in edits.target_field.values:
         temp_col_name = str(uuid.uuid4())
         orig_index_name = frame_to_edit.index.name
@@ -60,3 +61,9 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
     if temp_col_name:
         return frame_to_edit.set_index(temp_col_name).rename_axis(orig_index_name)
     return frame_to_edit
+
+
+def replace_indices(target: pandas.DataFrame, index_source: pandas.DataFrame) -> pandas.DataFrame:
+    return target.set_index(
+        target.index.to_series().replace(to_replace=list(index_source.iloc[:, 0]), value=list(index_source.index))
+    )

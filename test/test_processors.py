@@ -25,9 +25,16 @@ def test_match_indices_missing():
 
 def test_edit_using():
     assert cpgintegrate.processors.utils.edit_using(
-        pandas.DataFrame({"A":[1,2,3], "B":[4,5,6]}),
+        pandas.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]}),
         pandas.DataFrame({"match_field": ["A", "B"],
                           "match_value": [1, 5],
                           "target_field": ["B", "A"],
                           "target_value": [100, 500]})
     ).equals(pandas.DataFrame({"A": [1, 500, 3], "B": [100, 5, 6]}))
+
+
+def test_replace_indices():
+    assert cpgintegrate.processors.utils.replace_indices(
+        pandas.DataFrame(index=pandas.Index(['a', 'b', 'c'])),
+        pandas.DataFrame({'old_index': ['a', 'not_b', 'c']}, index=pandas.Index(['a1', 'b1', 'c1']))
+    ).index.equals(pandas.Index(['a1', 'b', 'c1']))

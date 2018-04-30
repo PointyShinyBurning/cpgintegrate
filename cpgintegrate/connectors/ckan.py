@@ -39,7 +39,9 @@ class CKAN(FileDownloadingConnector):
 
         return (pandas
                 .read_csv(requests.get(resource_url, headers={"Authorization": self.auth}, stream=True).raw)
-                .assign(**{cpgintegrate.SOURCE_FIELD_NAME: resource_url})
+                .pipe(
+                    lambda df: df.assign(**{cpgintegrate.SOURCE_FIELD_NAME: resource_url})
+                    if cpgintegrate.SOURCE_FIELD_NAME not in df.columns else df)
                 .pipe(lambda df: df.set_index(index_col) if index_col and index_col in df.columns else df)
                 )
 
