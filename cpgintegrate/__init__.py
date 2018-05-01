@@ -49,15 +49,14 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor, limit=No
                 raise ProcessingException({SOURCE_FIELD_NAME: source, SUBJECT_ID_FIELD_NAME: subject_id}) from e
             finally:
                 file.close()
-            yield (df.assign(
-                    **{SUBJECT_ID_FIELD_NAME: df.index
-                        if df.index.name == SUBJECT_ID_FIELD_NAME and subject_id is None else subject_id,
-                        FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None),
-                        SOURCE_FIELD_NAME: source, }))
+            extra_vars = {FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None), SOURCE_FIELD_NAME: source}
+            final_df = df.assign(**{SUBJECT_ID_FIELD_NAME: subject_id}).set_index(SUBJECT_ID_FIELD_NAME)\
+                if subject_id else df
+            yield final_df.assign(**extra_vars)
 
     frames = [frame for frame in get_frames()]
     column_order = ordering_sequence([list(frame.columns) for frame in frames])
-    return pandas.concat(frames).loc[:, column_order].set_index(SUBJECT_ID_FIELD_NAME)
+    return pandas.concat(frames).loc[:, column_order]
 
 
 class ProcessingException(Exception):

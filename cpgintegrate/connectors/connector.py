@@ -21,5 +21,5 @@ class FileDownloadingConnector(Connector):
     def iter_files(self, *args, **kwargs) -> typing.Iterator[typing.IO]:
         pass
 
-    def process_files(self, processor, limit=None, *args, **kwargs):
+    def process_files(self, processor, *args, limit=None, **kwargs):
         return cpgintegrate.process_files(self.iter_files(*args, **kwargs), processor, limit=limit)
