@@ -62,7 +62,7 @@ class XComDatasetToCkan(BaseOperator):
                 push_sess = requests.Session()
                 push_sess.mount(conn.host, HTTPAdapter(
                     max_retries=Retry(status_forcelist=[409, 404], method_whitelist=['POST'],
-                                      status=10, backoff_factor=0.01)))
+                                      status=10, backoff_factor=0.1)))
 
                 existing_dict_resp = push_sess.post(
                     url=conn.host + '/api/3/action/datastore_search',
