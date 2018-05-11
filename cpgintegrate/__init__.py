@@ -56,7 +56,8 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor, limit=No
 
     frames = [frame for frame in get_frames()]
     column_order = ordering_sequence([list(frame.columns) for frame in frames])
-    return pandas.concat(frames).loc[:, column_order]
+    column_order.remove(SOURCE_FIELD_NAME)
+    return pandas.concat(frames).loc[:, [SOURCE_FIELD_NAME]+column_order]
 
 
 class ProcessingException(Exception):
