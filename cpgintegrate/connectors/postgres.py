@@ -4,7 +4,7 @@ from .connector import Connector
 import cpgintegrate
 
 
-class Teleform(Connector):
+class Postgres(Connector):
 
     def __init__(self, auth=("", ""), schema="postgres", port=5432, host='localhost', **kwargs):
         super().__init__(**kwargs)
