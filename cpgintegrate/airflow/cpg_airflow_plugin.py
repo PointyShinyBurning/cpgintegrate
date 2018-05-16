@@ -142,17 +142,19 @@ class XComDatasetProcess(BaseOperator):
 
     @apply_defaults
     def __init__(self, post_processor=None, filter_cols=None, drop_na_cols=True,
-                 row_filter=lambda row: True, keep_duplicates=None, *args, **kwargs):
+                 row_filter=lambda row: True, keep_duplicates=None, task_id_kwargs=False, *args, **kwargs):
         """
         Post processing on DataFrames from ancestor XCOMs
 
-        :param post_processor: function to apply with all ancestor xcoms as arguements
-        :param filter_cols: list or str to translate as regex
-        :param drop_na_cols: boolean to drop columns left na by post processing
-        :param row_filter: filter out rows where this returns true
-        :param keep_duplicates: 'last', 'first' to keep those duplicates indices or False for none of them
+        :param post_processor: function to apply with all ancestor xcoms as args
+        :param filter_cols: list of columns or str to translate as regex
+        :param drop_na_cols: drop columns that are all na after post_processor?
+        :param row_filter: row filter to apply to output
+        :param keep_duplicates: 'last' or 'first' to keep only those duplicates indices
+        :param task_id_kwargs: True to call post_processor with task_id=DataFrame rather than *[DataFrame]
         """
         super().__init__(*args, **kwargs)
+        self.task_id_kwargs = task_id_kwargs
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
             self.column_filter = {"items": filter_cols + self.cols_always_present}
@@ -165,14 +167,16 @@ class XComDatasetProcess(BaseOperator):
         self.keep_duplicates = keep_duplicates
 
     def execute(self, context):
-        out_frame = self.post_processor(*(
-            frame.filter(**self.column_filter).loc[lambda df: df.apply(self.row_filter, axis=1)]
-            for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
+        if self.task_id_kwargs:
+            out_frame = self.post_processor(**{task_id: context['ti'].xcom_pull(self.task_id)
+                                               for task_id in self.upstream_task_ids})
+        else:
+            out_frame = self.post_processor(*(frame for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
         if self.drop_na_cols:
             out_frame.dropna(axis=1, how='all', inplace=True)
         if self.keep_duplicates:
             out_frame = out_frame.loc[~out_frame.index.duplicated(keep=self.keep_duplicates)]
-        return out_frame
+        return out_frame.filter(**self.column_filter).loc[lambda df: df.apply(self.row_filter, axis=1)]
 
 
 class AirflowCPGPlugin(AirflowPlugin):
