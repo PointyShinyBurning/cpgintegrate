@@ -168,8 +168,9 @@ class XComDatasetProcess(BaseOperator):
 
     def execute(self, context):
         if self.task_id_kwargs:
-            out_frame = self.post_processor(**{task_id: context['ti'].xcom_pull(self.task_id)
-                                               for task_id in self.upstream_task_ids})
+            out_frame = self.post_processor(**{task_id: df
+                                               for task_id, df in zip(self.upstream_task_ids,
+                                                                      context['ti'].xcom_pull(self.upstream_task_ids))})
         else:
             out_frame = self.post_processor(*(frame for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
         if self.drop_na_cols:
