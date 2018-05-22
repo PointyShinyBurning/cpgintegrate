@@ -19,7 +19,11 @@ setup(
     extras_require={'dev': [
             'pytest>=3.2.2',
             'apache-airflow>=1.9.0',
-        ]
+        ],
+        'win_auto': [
+            'pywinauto',
+            'patool',
+        ],
                     },
     data_files=[
         (os.path.join(os.environ.get('AIRFLOW_HOME', 'airflow'), 'plugins'),

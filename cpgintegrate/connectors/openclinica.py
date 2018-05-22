@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import re
 from zipfile import ZipFile
 from io import BytesIO
-
+from requests.utils import unquote
 
 class OpenClinica(FileDownloadingConnector):
 
@@ -72,7 +72,7 @@ class OpenClinica(FileDownloadingConnector):
                                         params={'fileName': item.attrib['Value']})
                 file_like = resp.raw
                 file_like.decode_content = True
-                file_like.name = resp.url
+                file_like.name = unquote(resp.url)
                 setattr(file_like, cpgintegrate.SUBJECT_ID_ATTR,
                         item.xpath('ancestor::d:SubjectData', namespaces=self.nsmap)[0]
                         .get('{%s}StudySubjectID' % self.nsmap['OpenClinica']))
