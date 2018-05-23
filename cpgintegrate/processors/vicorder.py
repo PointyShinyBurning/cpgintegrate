@@ -19,6 +19,7 @@ class Vicorder:
         :param exe_path: Path to Vicorder.exe
         """
         self.app = Application().start(exe_path)
+        self.app.top_window()
 
     def to_frame(self, zip_file):
         """
@@ -91,6 +92,7 @@ class Vicorder:
                     save_dialog.Edit.set_text(csv_temp_file)
                     save_dialog.Save.click_input()
                     first_exam = False
+                self.app.window(title_re='Reader Station.*').wait('active')
                 self.app.window(title_re='Reader Station.*')['Close'].click_input()
 
             df = pandas.read_csv(csv_temp_file)
