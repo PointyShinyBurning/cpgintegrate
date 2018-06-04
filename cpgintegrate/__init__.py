@@ -10,6 +10,7 @@ CACHE_KEY_ATTR = 'cpgintegrate_hash_key'
 SOURCE_FIELD_NAME = 'Source'
 SUBJECT_ID_FIELD_NAME = 'SubjectID'
 FILE_SUBJECT_ID_FIELD_NAME = 'FileSubjectID'
+ERROR_FIELD_NAME = 'proc_error'
 
 UNITS_ATTRIBUTE_NAME = 'label'
 DESCRIPTION_ATTRIBUTE_NAME = 'notes'
@@ -35,7 +36,8 @@ def ordering_sequence(sequences: [[Any]]) -> [Any]:
     return output
 
 
-def process_files(file_iterator: typing.Iterator[typing.IO], processor, limit=None) -> pandas.DataFrame:
+def process_files(file_iterator: typing.Iterator[typing.IO], processor,
+                  limit=None, continue_on_error=False) -> pandas.DataFrame:
 
     processing_func = processor if callable(processor) else processor.to_frame
 
@@ -45,14 +47,18 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor, limit=No
             subject_id = getattr(file, SUBJECT_ID_ATTR, None)
             try:
                 df = processing_func(file)
+                extra_vars = {FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None), SOURCE_FIELD_NAME: source}
+                final_df = df.assign(**{SUBJECT_ID_FIELD_NAME: subject_id}).set_index(SUBJECT_ID_FIELD_NAME)\
+                    if subject_id else df
+                yield final_df.assign(**extra_vars)
             except Exception as e:
-                raise ProcessingException({SOURCE_FIELD_NAME: source, SUBJECT_ID_FIELD_NAME: subject_id}) from e
+                if continue_on_error:
+                    yield pandas.DataFrame({SOURCE_FIELD_NAME: source, ERROR_FIELD_NAME: e},
+                                           index=pandas.Index([subject_id], name=SUBJECT_ID_FIELD_NAME))
+                else:
+                    raise ProcessingException({SOURCE_FIELD_NAME: source, SUBJECT_ID_FIELD_NAME: subject_id}) from e
             finally:
                 file.close()
-            extra_vars = {FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None), SOURCE_FIELD_NAME: source}
-            final_df = df.assign(**{SUBJECT_ID_FIELD_NAME: subject_id}).set_index(SUBJECT_ID_FIELD_NAME)\
-                if subject_id else df
-            yield final_df.assign(**extra_vars)
 
     frames = [frame for frame in get_frames()]
     column_order = ordering_sequence([list(frame.columns) for frame in frames])
