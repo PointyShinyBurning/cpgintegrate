@@ -6,7 +6,7 @@ import tempfile
 import patoolib
 import re
 import glob
-
+from pywinauto import timings
 
 class Vicorder:
 
@@ -20,6 +20,7 @@ class Vicorder:
         """
         self.app = Application().start(exe_path)
         self.app.top_window()
+        timings.Timings.Slow()
 
     def to_frame(self, zip_file):
         """
@@ -71,7 +72,7 @@ class Vicorder:
             main_window.wait('exists')
             main_window.Import.click_input()
             self.app.Open.wait('exists')
-            self.app.Open.Edit.set_text(next(glob.iglob(temp_dir+'/*/*.xml')))
+            self.app.Open.Edit.set_text(next(glob.iglob(temp_dir+'/**/*.xml', recursive=True)))
             self.app.Open.Open.click_input()
             self.app.Vicorder.wait('exists')
             self.app.Vicorder.OK.click_input()
