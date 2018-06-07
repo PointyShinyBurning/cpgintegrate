@@ -32,8 +32,14 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
 
     # Switch to a temporary database because deleting patients
     #  leads to their exams showing up in subsequent imports
+
     main_window = app['Reader Station - [Administration]']
-    main_window['Database Utilities'].click_input()
+    try:
+        main_window['Database Utilities'].click_input()
+    except timings.TimeoutError:
+        app.kill()
+        app = Application().start(exe_path)
+        main_window['Database Utilities'].click_input()
 
     util = Desktop()['Database Utilities']
     util['Change Database Location'].click_input()
