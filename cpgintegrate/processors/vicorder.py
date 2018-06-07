@@ -34,12 +34,15 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
     #  leads to their exams showing up in subsequent imports
 
     main_window = app['Reader Station - [Administration]']
+
     try:
-        main_window['Database Utilities'].click_input()
+        main_window.wait('active')
     except timings.TimeoutError:
         app.kill()
         app = Application().start(exe_path)
-        main_window['Database Utilities'].click_input()
+        main_window = app['Reader Station - [Administration]']
+
+    main_window['Database Utilities'].click_input()
 
     util = Desktop()['Database Utilities']
     util['Change Database Location'].click_input()
@@ -87,7 +90,7 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
 
         main_window.ListView2.Select(1).click_input()
 
-        csv_temp_file = os.path.join(temp_data_dir, 'vicorder.csv')
+        csv_temp_file = os.path.join(temp_dir, 'vicorder.csv')
 
         exams_list = main_window.ListView
         first_exam = True
