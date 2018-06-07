@@ -36,13 +36,13 @@ def ordering_sequence(sequences: [[Any]]) -> [Any]:
     return output
 
 
-def process_files(file_iterator: typing.Iterator[typing.IO], processor,
+def process_files(file_iterator: typing.Iterator[typing.IO], processor, start=None,
                   limit=None, continue_on_error=False) -> pandas.DataFrame:
 
     processing_func = processor if callable(processor) else processor.to_frame
 
     def get_frames():
-        for file in itertools.islice(file_iterator, limit):
+        for file in itertools.islice(file_iterator, start, limit):
             source = getattr(file, 'name', None)
             subject_id = getattr(file, SUBJECT_ID_ATTR, None)
             try:

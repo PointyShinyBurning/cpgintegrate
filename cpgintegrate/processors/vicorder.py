@@ -8,6 +8,7 @@ import re
 import glob
 from pywinauto import timings
 
+
 class Vicorder:
 
     def __init__(self, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorder/Vicorder.exe'):
