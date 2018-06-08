@@ -58,7 +58,7 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
                 = row.get("target_value", None)
         except KeyError:
             raise ProcessingException("Edits error on %s , %s, %s, %s"
-                                      % (row.match_field, row.match_value, row.target_field, row.target_value))
+                                      % (row.match_field, row.match_value, row.target_field, row.get("target_value", None)))
     if temp_col_name:
         return frame_to_edit.set_index(temp_col_name).rename_axis(orig_index_name)
     return frame_to_edit
