@@ -41,6 +41,7 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
         app.kill()
         app = Application().start(exe_path)
         main_window = app['Reader Station - [Administration]']
+        main_window.wait('active', 10)
 
     main_window['Database Utilities'].click_input()
 
