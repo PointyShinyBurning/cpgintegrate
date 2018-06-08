@@ -36,7 +36,7 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
     main_window = app['Reader Station - [Administration]']
 
     try:
-        main_window.wait('active')
+        main_window.wait('active', 10)
     except timings.TimeoutError:
         app.kill()
         app = Application().start(exe_path)
@@ -46,15 +46,15 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
 
     util = Desktop()['Database Utilities']
     util['Change Database Location'].click_input()
-    Desktop()['Save As'].wait('exists', 10)
+    Desktop()['Save As'].wait('exists')
     Desktop()['Save As'].Edit.set_text(os.path.normcase(temp_data_dir + '/DopData.db'))
     Desktop()['Save As'].Save.click_input()
 
-    Desktop().Vicorder.No.click_input()
-    Desktop().Vicorder.Yes.click_input()
-    Desktop().Vicorder.OK.click_input()
+    for func in ['No', 'Yes', 'OK']:
+                Desktop().Vicorder.wait('exists', 5)
+                Desktop().Vicorder[func].click_input()
 
-    Desktop()['Save As'].wait('exists', 10)
+    Desktop()['Save As'].wait('exists')
     os.makedirs(temp_data_dir + '/Backup')
     Desktop()['Save As'].Edit.set_text(os.path.normcase(temp_data_dir + '/Backup/DopData.bk'))
     Desktop()['Save As'].Save.click_input()
@@ -112,7 +112,5 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
             app.window(title_re='Reader Station.*')['Close'].click_input()
 
         df = pandas.read_csv(csv_temp_file)
-
-        os.remove(csv_temp_file)
 
         return df
