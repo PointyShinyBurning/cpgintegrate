@@ -102,9 +102,12 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
             try:
                 main_window.wait_not('exists')
                 app.window(title_re='Reader Station.*').Save.click_input()
-            except (timings.TimeoutError, ElementNotFoundError):
+            except ElementNotFoundError:
                 app.Vicorder.OK.click_input()
                 app.window(title_re='Reader Station.*').Save.click_input()
+            except timings.TimeoutError:
+                app.Vicorder.OK.click_input()
+                continue
             if first_exam:
                 save_dialog = app.Dialog
                 save_dialog.Edit.set_text(csv_temp_file)
