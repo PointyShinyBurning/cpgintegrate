@@ -1,5 +1,6 @@
 import pandas
 from pywinauto.application import Application, ProcessNotFoundError
+from pywinauto.findwindows import  ElementNotFoundError
 from pywinauto import Desktop
 import os
 import tempfile
@@ -52,7 +53,7 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
     Desktop()['Save As'].Save.click_input()
 
     for func in ['No', 'Yes', 'OK']:
-                Desktop().Vicorder.wait('exists', 5)
+                Desktop().Vicorder.wait('exists', 20)
                 Desktop().Vicorder[func].click_input()
 
     Desktop()['Save As'].wait('exists')
@@ -100,10 +101,10 @@ def to_frame(zip_file, exe_path='C:/Program Files (x86)/Skidmore Medical/Vicorde
             exams_list.Select(i).click_input(button='left', double=True)
             try:
                 main_window.wait_not('exists')
-            except timings.TimeoutError:
+                app.window(title_re='Reader Station.*').Save.click_input()
+            except (timings.TimeoutError, ElementNotFoundError):
                 app.Vicorder.OK.click_input()
-                continue
-            app.window(title_re='Reader Station.*').Save.click_input()
+                app.window(title_re='Reader Station.*').Save.click_input()
             if first_exam:
                 save_dialog = app.Dialog
                 save_dialog.Edit.set_text(csv_temp_file)
