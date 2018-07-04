@@ -38,3 +38,9 @@ def test_replace_indices():
         pandas.DataFrame(index=pandas.Index(['a', 'b', 'c'])),
         pandas.DataFrame({'old_index': ['a', 'not_b', 'c']}, index=pandas.Index(['a1', 'b1', 'c1']))
     ).index.equals(pandas.Index(['a1', 'b', 'c1']))
+
+
+def test_imagej_hri():
+    from cpgintegrate.processors.imagej_hri import to_frame
+    df = to_frame(open('res/imageJ_hri.xls', 'rb'))
+    assert len(df) == 1 and df.iloc[0].Liver_Width == 1.5
