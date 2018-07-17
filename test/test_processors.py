@@ -1,6 +1,8 @@
 import pandas
 import cpgintegrate.processors.utils
 import pytest
+import io
+from cpgintegrate.processors.extension_check import ExtensionCheck
 
 
 def test_epiq7_liverelast():
@@ -44,3 +46,29 @@ def test_imagej_hri():
     from cpgintegrate.processors.imagej_hri import to_frame
     df = to_frame(open('res/imageJ_hri.xls', 'rb'))
     assert len(df) == 1 and df.iloc[0].Liver_Width == 1.5
+
+
+def test_extension_check():
+    file = io.BytesIO(b'000')
+    file.name = 'file.extension'
+    df = ExtensionCheck('.extension').to_frame(file)
+
+
+def test_extension_check_list():
+    file = io.BytesIO(b'000')
+    file.name = 'file.another'
+    df = ExtensionCheck(['.one', '.another']).to_frame(file)
+
+
+def test_extension_check_bad():
+    file = io.BytesIO(b'000')
+    file.name = 'file.nothing'
+    with pytest.raises(NameError):
+        df = ExtensionCheck('.extension').to_frame(file)
+
+
+def test_extension_check_list_bad():
+    file = io.BytesIO(b'000')
+    file.name = 'file.another'
+    with pytest.raises(NameError):
+        df = ExtensionCheck(['.one', '.two']).to_frame(file)
