@@ -52,7 +52,7 @@ def to_frame(file):
             sheet[avg] = data[avg].iloc[-1]
         else:
             seq = data[avg][1:]
-            if (seq[1] - seq[2]) < 10:
+            if abs(seq[1] - seq[2]) <= 10:
                 sheet[avg] = seq[1:3].mean()
             else:
                 pairs = [(numpy.mean([i, i1]), abs(i-i1)) for i, i1 in itertools.combinations(seq, 2)]
