@@ -56,3 +56,8 @@ class ColumnInfoFrame(DataFrame):
             (other.get_column_info() == self.get_column_info()) and super().equals(other)
         except AttributeError:
             return False
+
+    def apply(self, *args, **kwargs):
+        op = super().apply(*args, **kwargs)
+        op._column_info = self._column_info
+        return op
