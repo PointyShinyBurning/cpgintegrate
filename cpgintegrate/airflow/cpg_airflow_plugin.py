@@ -120,23 +120,18 @@ class CPGProcessorToXCom(CPGDatasetToXCom):
     ui_color = '#E7FEFF'
 
     @apply_defaults
-    def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None,
-                 processor_args=None, processor_kwargs=None, file_subject_id=False, *args, **kwargs):
+    def __init__(self, processor, iter_files_args=None, iter_files_kwargs=None, file_subject_id=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.iter_files_args = iter_files_args or []
         self.iter_files_kwargs = iter_files_kwargs or {}
         self.processor = processor
-        self.processor_args = processor_args or []
-        self.processor_kwargs = processor_kwargs or {}
         self.file_subject_id = file_subject_id
 
     def execute(self, context):
         connector_instance = self._get_connector()
-        processor_instance = self.processor(*self.processor_args, **self.processor_kwargs).to_frame \
-            if isinstance(self.processor, type) else self.processor
         return (cpgintegrate
                 .process_files(connector_instance.iter_files(*self.iter_files_args, **self.iter_files_kwargs),
-                               processor_instance)
+                               self.processor)
                 .drop([] if self.file_subject_id else cpgintegrate.FILE_SUBJECT_ID_FIELD_NAME, axis=1, errors='ignore'))
 
 
