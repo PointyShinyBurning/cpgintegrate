@@ -98,14 +98,14 @@ class CPGDatasetToXCom(BaseOperator):
     ui_color = '#7DF9FF'
 
     @apply_defaults
-    def __init__(self, connector_class, connection_id, dataset_args=None, dataset_kwargs=None, connector_kwargs={},
+    def __init__(self, connector_class, connection_id, dataset_args=None, dataset_kwargs=None, connector_kwargs=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connector_class = connector_class
         self.connection_id = connection_id
         self.dataset_args = dataset_args or []
         self.dataset_kwargs = dataset_kwargs or {}
-        self.connector_kwargs = connector_kwargs
+        self.connector_kwargs = connector_kwargs or {}
 
     def _get_connector(self):
         conn = BaseHook.get_connection(self.connection_id)
