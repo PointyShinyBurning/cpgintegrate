@@ -53,7 +53,7 @@ class ColumnInfoFrame(DataFrame):
 
     def equals(self, other):
         try:
-            (other.get_column_info() == self.get_column_info()) and super().equals(other)
+            return (other.get_column_info() == self.get_column_info()) and super().equals(other)
         except AttributeError:
             return False
 

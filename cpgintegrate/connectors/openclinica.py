@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from io import BytesIO
 from requests.utils import unquote
 
+
 class OpenClinica(FileDownloadingConnector):
 
     def __init__(self, schema: str, auth: (str, str) = None, xml_path: str = None, dataset_id: int = None,
