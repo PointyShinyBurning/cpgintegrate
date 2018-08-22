@@ -11,16 +11,13 @@ def to_frame(file):
     df = ColumnInfoFrame(index=[0])
 
     lines = file.read().decode('UTF-8').splitlines()
-    dividers = iter([n for n, line in enumerate(lines) if line.startswith('====')] + [len(lines)])
+    dividers = [n for n, line in enumerate(lines) if line.startswith('====')] + [len(lines)]
 
-    for start, end in zip(dividers, dividers):
+    for start, end in zip(dividers[:-1], dividers[1:]):
         if lines[start - 1] != 'Curves':
-            chunk = lines[start+1:end]
-            try:
-                prefix_divider = next(n for n, l in enumerate(chunk) if l.startswith('----'))
-                prefix = "_".join(chunk[:prefix_divider])
-            except StopIteration:
-                prefix = None
+            chunk = [line for line in lines[start+1:end-1] if line.strip() and not(line.startswith('----'))]
+            prefix_lines = [l for l in chunk if not (';' in l)]
+            prefix = "_".join(prefix_lines) if prefix_lines else None
             var_lines = [l.split(';') for l in chunk if ';' in l]
             for var_name, value, *units in var_lines:
                 full_var_name = '_'.join([prefix, var_name]) if prefix else var_name
