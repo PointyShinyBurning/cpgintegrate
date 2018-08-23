@@ -8,7 +8,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'requests>=2.18.4',
-        'pandas>=0.22.0',
+        'pandas>=0.23.0',
         'xlrd',
         'sqlalchemy>=1.0',
         'beautifulsoup4',

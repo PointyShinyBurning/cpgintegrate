@@ -72,3 +72,9 @@ def test_extension_check_list_bad():
     file.name = 'file.another'
     with pytest.raises(NameError):
         df = ExtensionCheck(['.one', '.two']).to_frame(file)
+
+
+def test_mobilograph():
+    from cpgintegrate.processors.mobilograph import to_frame
+    df = to_frame(open('res/mobilograph.xls', 'rb'))
+    assert len(df) == 11 and df.cSBP.iloc[-1] == 119
