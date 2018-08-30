@@ -22,7 +22,7 @@ class XComDatasetToCkan(BaseOperator):
 
         conn = BaseHook.get_connection(self.ckan_connection_id)
 
-        source_task_id = self.upstream_task_ids[0]
+        source_task_id = self.upstream_list[0].task_id
 
         push_frame = context['ti'].xcom_pull(source_task_id)
         old_frame = context['ti'].xcom_pull(self.task_id, include_prior_dates=True)
@@ -165,12 +165,13 @@ class XComDatasetProcess(BaseOperator):
         self.keep_duplicates = keep_duplicates
 
     def execute(self, context):
+        upstream_list = [task.task_id for task in self.upstream_list]
         if self.task_id_kwargs:
             out_frame = self.post_processor(**{task_id: df
-                                               for task_id, df in zip(self.upstream_task_ids,
-                                                                      context['ti'].xcom_pull(self.upstream_task_ids))})
+                                               for task_id, df in zip(upstream_list,
+                                                                      context['ti'].xcom_pull(upstream_list))})
         else:
-            out_frame = self.post_processor(*(frame for frame in context['ti'].xcom_pull(self.upstream_task_ids)))
+            out_frame = self.post_processor(*(frame for frame in context['ti'].xcom_pull(upstream_list)))
         if self.drop_na_cols:
             out_frame.dropna(axis=1, how='all', inplace=True)
         if self.keep_duplicates:
