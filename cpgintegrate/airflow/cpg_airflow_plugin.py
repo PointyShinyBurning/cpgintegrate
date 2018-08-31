@@ -7,7 +7,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import csv
-
+import inspect
 
 class XComDatasetToCkan(BaseOperator):
 
@@ -139,19 +139,21 @@ class XComDatasetProcess(BaseOperator):
     cols_always_present = [cpgintegrate.SOURCE_FIELD_NAME]
 
     @apply_defaults
-    def __init__(self, post_processor=None, filter_cols=None, drop_na_cols=True,
-                 row_filter=lambda row: True, keep_duplicates=None, task_id_kwargs=False, *args, **kwargs):
+    def __init__(self, post_processor=None, arg_map=None, task_id_kwargs=False, filter_cols=None, drop_na_cols=True,
+                 row_filter=lambda row: True, keep_duplicates=None, *args, **kwargs):
         """
         Post processing on DataFrames from ancestor XCOMs
 
         :param post_processor: function to apply with all ancestor xcoms as args
+        :param arg_map: dict that maps task_ids of upstream tasks to post_processor arguments
+        :param task_id_kwargs: Submit all upstream xcoms to post_processor as task_id=dataframe kwargs?
         :param filter_cols: list of columns or str to translate as regex
         :param drop_na_cols: drop columns that are all na after post_processor?
         :param row_filter: row filter to apply to output
         :param keep_duplicates: 'last' or 'first' to keep only those duplicates indices
-        :param task_id_kwargs: True to call post_processor with task_id=DataFrame rather than *[DataFrame]
         """
         super().__init__(*args, **kwargs)
+        self.arg_map = arg_map or {}
         self.task_id_kwargs = task_id_kwargs
         self.post_processor = post_processor or (lambda x: x)
         if type(filter_cols) == list:
@@ -165,13 +167,19 @@ class XComDatasetProcess(BaseOperator):
         self.keep_duplicates = keep_duplicates
 
     def execute(self, context):
-        upstream_list = [task.task_id for task in self.upstream_list]
+        arg_spec = inspect.getfullargspec(self.post_processor).args
+        for task_id in self.upstream_task_ids:
+            if task_id in arg_spec:
+                self.arg_map.update({task_id: task_id})
         if self.task_id_kwargs:
-            out_frame = self.post_processor(**{task_id: df
-                                               for task_id, df in zip(upstream_list,
-                                                                      context['ti'].xcom_pull(upstream_list))})
-        else:
-            out_frame = self.post_processor(*(frame for frame in context['ti'].xcom_pull(upstream_list)))
+            self.arg_map.update({task_id: task_id for task_id in self.upstream_task_ids})
+        if len(self.upstream_list) == 1 and not self.arg_map:
+            self.arg_map = {next(iter(self.upstream_task_ids)): arg_spec[0]}
+
+        assert self.arg_map, "Must have an arg_map, task_id_kwargs or argument names that match task_ids" \
+                             " for post_processors with multiple upstream tasks"
+        out_frame = self.post_processor(**{self.arg_map[task_id]: context['ti'].xcom_pull(task_id)
+                                           for task_id in self.upstream_task_ids})
         if self.drop_na_cols:
             out_frame.dropna(axis=1, how='all', inplace=True)
         if self.keep_duplicates:
