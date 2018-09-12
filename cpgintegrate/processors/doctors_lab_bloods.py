@@ -4,7 +4,7 @@ Screen-scrapes bloods results in 'The Doctors Lab' html format into a DataFrame
 import pandas
 from bs4 import BeautifulSoup
 import cpgintegrate
-from cpgintegrate import ColumnInfoFrame
+from cpgintegrate.column_info_frame import ColumnInfoFrame
 
 
 def to_frame(file):

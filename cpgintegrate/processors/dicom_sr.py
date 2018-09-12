@@ -3,7 +3,7 @@ import subprocess
 import os
 import tempfile
 from lxml import etree
-from cpgintegrate import ColumnInfoFrame
+from cpgintegrate.column_info_frame import ColumnInfoFrame
 import cpgintegrate
 
 

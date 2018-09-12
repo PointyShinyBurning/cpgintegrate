@@ -1,8 +1,9 @@
-from pandas import DataFrame
+import pandas
 import json
+import cpgintegrate
 
 
-class ColumnInfoFrame(DataFrame):
+class ColumnInfoFrame(pandas.DataFrame):
     """
     Adds arbitrary dict of column metadata and a method to output it to ckan-datastore compliant JSON field list
 
@@ -61,3 +62,9 @@ class ColumnInfoFrame(DataFrame):
         op = super().apply(*args, **kwargs)
         op._column_info = self._column_info
         return op
+
+    def to_brackets_dataframe(self, bracketed_info_field=cpgintegrate.UNITS_ATTRIBUTE_NAME):
+        return pandas.DataFrame(self).rename(columns={
+            c: '{0} ({1})'.format(c, self._column_info[c][bracketed_info_field])
+            for c in self.columns if c in self._column_info and bracketed_info_field in self._column_info[c]
+        })

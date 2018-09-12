@@ -3,7 +3,7 @@ from lxml import etree
 import typing
 from .connector import FileDownloadingConnector
 import cpgintegrate
-from cpgintegrate import ColumnInfoFrame
+from cpgintegrate.column_info_frame import ColumnInfoFrame
 from bs4 import BeautifulSoup
 import re
 from zipfile import ZipFile
@@ -89,14 +89,14 @@ class OpenClinica(FileDownloadingConnector):
                         .json()['Study']['MetaDataVersion']['FormDef']
                     }
 
-    def get_dataset(self, form_oid_prefix: str = "", include_meta_columns=False):
+    def get_dataset(self, form_oid_prefix: str = "", include_meta_columns=False, oid_var_names=False):
 
         def item_col_name(item_data):
             return "_".join(
-                filter(None, [
-                    self._xpath("./d:Study/d:MetaDataVersion/d:ItemDef[@OID='%s']"
-                                % item_data.attrib['ItemOID'])[0].attrib['Name'],
-                    item_data.getparent().attrib.get('ItemGroupRepeatKey')]))
+                filter(None, [item_data.attrib['ItemOID'] if oid_var_names else
+                              self._xpath("./d:Study/d:MetaDataVersion/d:ItemDef[@OID='%s']"
+                                          % item_data.attrib['ItemOID'])[0].attrib['Name'],
+                              item_data.getparent().attrib.get('ItemGroupRepeatKey')]))
 
         def form_to_dict(form):
             def item_group_listize(item_group):

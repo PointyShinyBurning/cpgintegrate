@@ -1,4 +1,4 @@
-from cpgintegrate import ColumnInfoFrame
+from cpgintegrate.column_info_frame import ColumnInfoFrame
 import cpgintegrate
 
 

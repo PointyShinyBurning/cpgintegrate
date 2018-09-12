@@ -1,5 +1,5 @@
 import cpgintegrate
-from cpgintegrate import ColumnInfoFrame
+from cpgintegrate.column_info_frame import ColumnInfoFrame
 
 
 def units_in_brackets_to_col_info(sheet):

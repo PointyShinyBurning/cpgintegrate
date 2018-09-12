@@ -4,6 +4,7 @@ import pandas
 import re
 from cpgintegrate import ProcessingException
 
+
 def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
                   index_transform: Callable = lambda x: int(re.compile(r'[^\d]+').sub("", x))) -> pandas.DataFrame:
     """
@@ -58,7 +59,8 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
                 = row.get("target_value", None)
         except KeyError:
             raise ProcessingException("Edits error on %s , %s, %s, %s"
-                                      % (row.match_field, row.match_value, row.target_field, row.get("target_value", None)))
+                                      % (row.match_field, row.match_value,
+                                         row.target_field, row.get("target_value", None)))
     if temp_col_name:
         return frame_to_edit.set_index(temp_col_name).rename_axis(orig_index_name)
     return frame_to_edit

@@ -1,6 +1,5 @@
 import pandas
 import typing
-from .column_info_frame import ColumnInfoFrame
 import itertools
 from typing import Any
 
@@ -47,7 +46,8 @@ def process_files(file_iterator: typing.Iterator[typing.IO], processor, start=No
             subject_id = getattr(file, SUBJECT_ID_ATTR, None)
             try:
                 df = processing_func(file)
-                extra_vars = {FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None), SOURCE_FIELD_NAME: source}
+                extra_vars = \
+                    {FILE_SUBJECT_ID_FIELD_NAME: (df.index if df.index.name else None), SOURCE_FIELD_NAME: source}
                 final_df = df.assign(**{SUBJECT_ID_FIELD_NAME: subject_id}).set_index(SUBJECT_ID_FIELD_NAME)\
                     if subject_id else df
                 yield final_df.assign(**extra_vars)
