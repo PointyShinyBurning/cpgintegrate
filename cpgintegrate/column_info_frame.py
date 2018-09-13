@@ -35,11 +35,16 @@ class ColumnInfoFrame(pandas.DataFrame):
     def get_json_column_info(self):
         return json.dumps(self.get_column_info())
 
-    def get_column_info(self):
-        return [
-            {**{"id": col_name}, **({"info": self._column_info[col_name]} if col_name in self._column_info else {})}
-            for col_name in [self.index.name or ""]+list(self.columns)
-        ]
+    def get_column_info(self, bare=False):
+        col_names = [self.index.name or ""]+list(self.columns)
+        if bare:
+            return {col_name: self._column_info[col_name] if col_name in self._column_info else {}
+                    for col_name in col_names}
+        else:
+            return [
+                {**{"id": col_name}, **({"info": self._column_info[col_name]} if col_name in self._column_info else {})}
+                for col_name in col_names
+            ]
 
     def set_column_info(self, column_info):
         copy = self.copy(deep=True)
