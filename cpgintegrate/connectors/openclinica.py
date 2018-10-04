@@ -12,6 +12,7 @@ from requests.utils import unquote
 
 
 class OpenClinica(FileDownloadingConnector):
+    """Connector for OpenClinica 3.14"""
 
     def __init__(self, schema: str, auth: (str, str) = None, xml_path: str = None, dataset_id: int = None,
                  host='http://localhost/OpenClinica', **kwargs):

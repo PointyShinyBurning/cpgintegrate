@@ -17,7 +17,7 @@ class CKAN(FileDownloadingConnector):
         CKAN API Key will be read from ~/ckan_api_key file if auth not given
 
         :param host: Base url of ckan instance
-        :param auth: CKAN API Key from users ckan home page, as string or second element of tuple
+        :param auth: CKAN API Key from user's ckan home page, as string or second element of tuple
         """
         super().__init__(**kwargs)
         if type(auth) == str:

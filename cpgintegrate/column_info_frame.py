@@ -5,7 +5,7 @@ import cpgintegrate
 
 class ColumnInfoFrame(pandas.DataFrame):
     """
-    Adds arbitrary dict of column metadata and a method to output it to ckan-datastore compliant JSON field list
+    pandas DataFrame that also has column metadata, designed to be output as ckan-datastore compliant JSON
 
     LIKELY BAD FOR GENERAL USE, only parts I've used in this package have been looked at to see if they work properly
     """
