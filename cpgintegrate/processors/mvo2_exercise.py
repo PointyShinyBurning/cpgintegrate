@@ -6,7 +6,7 @@ import numpy as np
 from . import units_in_brackets_to_col_info
 
 
-def to_frame(file):
+def to_frame(file, line_data=False):
     # Eats some bytes and spits out exercise test results
     # print("Processing:" + fileName + "(" + subjectID + ")")
 
@@ -52,6 +52,9 @@ def to_frame(file):
                 data[phase_3_4_midpoint - 30:phase_3_4_midpoint + 30][var + '60secavg'].max()
         except IndexError:
             pass
+
+    if line_data:
+        return data
 
     # ratios
     sheet['Min VE60secavg/VO260secavg(l/min)'] = (data.VE60secavg / data.VO260secavg).min()
