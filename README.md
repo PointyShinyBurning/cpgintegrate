@@ -4,12 +4,10 @@ Is a Python package for turning the output of some medical research software int
 It was written for the [SABRE study]('https://www.sabrestudy.org') at University College London and [that study's workflow](https://github.com/PointyShinyBurning/sabre_flow) is a good example of how it might be used.
 
 **WARNING: Extremely far from being stable, or probably doing anything sensible at all except in my narrow use cases**
-
 ## installing
 `pip install .` from the download directory or `pip install git+https://github.com/PointyShinyBurning/cpgintegrate.git#egg=cpgintegrate` to fetch the latest development version straight from the internet.
 
 For the Airflow plugin you need to copy airflow/cpg_airflow_plugin.py to your `$AIRFLOW_HOME/plugins` folder (in some pip versions this might happen automatically)
-
 ## basic use
 **Connectors** let you talk to a data capture system, for example [XNAT](https://www.xnat.org/). To get the list of sessions from the "Effects of bilingualism on brain structure and function" study on XNAT CENTRAL:
 ```
@@ -29,3 +27,9 @@ files_first_bytes = xnat_central.process_files(initial_bytes, limit=10)
 files_first_bytes.to_csv('files_first_bytes.csv')
 ```
 Some more useful ones for various file formats are in the cpgintegrate.processors package.
+## airflow
+**Current version stores full DataFrames in the XCOM table, this is likely to get pretty big if you have workflows running every day, consider truncating periodically**  
+Connections to be used by cpgintegrate are all 'http' type in Airflow.
+- The CPGDatasetToXCom and CPGProcessorToXCom operators pull data from cpggintegrate connectors using their get_dataset and process_files methods respectively and push the resulting DataFrames to XCOM.
+- The XComDatasetProcess operator executes a method on the DataFrames from its upstream tasks and returns a dataframe to XCOM.
+- XComDatasetToCkan takes the XCOM-stored DataFrame from its upstream task and inserts it into a ckan instance.
