@@ -10,7 +10,7 @@ def match_indices(match_from: pandas.DataFrame, match_in: pandas.DataFrame,
     """
     Replace index values in a frame by searching using transformed index in another
 
-    Replace indices of match_from with first instance found in match_to when both are transformed using index_transform.
+    Replace indices of match_from with first instance found in match_in when both are transformed using index_transform.
     KeyError if any index of match_from is missing.
 
     :param match_from: DataFrame whose index values I should check and replace
