@@ -63,8 +63,8 @@ def to_frame(file):
     data = data.append(data_range)
 
     # Extra variables
-    date = str(soup.div.table.contents[4].contents[1].string)
-    report_date = str(soup.div.table.contents[8].contents[1].string)
+    date = soup.div.table.contents[4].contents[1].text
+    report_date = soup.div.table.contents[8].contents[1].text
     data = data.append({'field': 'Collected:', 'value': date}, ignore_index=True)
     data = data.append({'field': 'Report Date:', 'value': report_date}, ignore_index=True)
     data = data.append(comments, ignore_index=True)
