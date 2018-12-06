@@ -39,21 +39,32 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
     """
     Edit DataFrame using list of edits in another DataFrame.
 
-    Alters each target_field value in frame_to_edit to target_value where match_field == match_value
+    Alters each target_field value in frame_to_edit to target_value where match_field == match_value, or removes the row
+    if remove_row is > 0
     :param frame_to_edit: DataFrame to edit
-    :param edits: DataFrame with edits in columns match_field, match_value, target_field, target_value, comment
+    :param edits: DataFrame with edits in columns match_field, match_value, target_field, target_value
+    optionally remove_row
     :return:
     """
-    # Use temporary name to avoid clobbering any existing column
 
+    frame_to_edit = frame_to_edit.copy(deep=True)
+
+    # remove_rows
+    if "remove_row" in edits.columns:
+        for _, remove_spec in edits[edits.remove_row > 0].iterrows():
+            frame_to_edit = frame_to_edit[~(frame_to_edit[remove_spec.match_field] == remove_spec.match_value)]
+
+    # Use temporary name to avoid clobbering any existing column
     temp_col_name = None
     orig_index_name = None
-    if frame_to_edit.index.name in edits.target_field.values:
+    if frame_to_edit.index.name and (frame_to_edit.index.name in edits.target_field.values):
         temp_col_name = str(uuid.uuid4())
         orig_index_name = frame_to_edit.index.name
         frame_to_edit[temp_col_name] = frame_to_edit.index
         edits.loc[edits.target_field == orig_index_name, 'target_field'] = temp_col_name
-    for _, row in edits.iterrows():
+
+    for _, row in edits.loc[edits.target_field.fillna("") != ""].iterrows():
+        print(frame_to_edit)
         try:
             frame_to_edit.loc[frame_to_edit[row.match_field] == row.match_value, row.target_field] \
                 = row.get("target_value", None)
@@ -61,6 +72,7 @@ def edit_using(frame_to_edit: pandas.DataFrame, edits: pandas.DataFrame) -> pand
             raise ProcessingException("Edits error on %s , %s, %s, %s"
                                       % (row.match_field, row.match_value,
                                          row.target_field, row.get("target_value", None)))
+
     if temp_col_name:
         return frame_to_edit.set_index(temp_col_name).rename_axis(orig_index_name)
     return frame_to_edit

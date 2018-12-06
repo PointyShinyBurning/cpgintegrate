@@ -3,7 +3,7 @@ import cpgintegrate.processors.utils
 import pytest
 import io
 from cpgintegrate.processors.extension_check import ExtensionCheck
-
+import numpy as np
 
 def test_epiq7_liverelast():
     # TODO Some tests
@@ -33,6 +33,27 @@ def test_edit_using():
                           "target_field": ["B", "A"],
                           "target_value": [100, 500]})
     ).equals(pandas.DataFrame({"A": [1, 500, 3], "B": [100, 5, 6]}))
+
+
+def test_edit_using_index_target():
+    assert cpgintegrate.processors.utils.edit_using(
+        pandas.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]}).set_index("A"),
+        pandas.DataFrame({"match_field": ["B"],
+                          "match_value": [5],
+                          "target_field": ["A"],
+                          "target_value": [500]})
+    ).equals(pandas.DataFrame({"A": [1, 500, 3], "B": [4, 5, 6]}).set_index("A"))
+
+
+def test_edit_using_remove():
+    assert cpgintegrate.processors.utils.edit_using(
+        pandas.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]}),
+        pandas.DataFrame({"match_field": ["A", "B", "A"],
+                          "match_value": [1, 5, 3],
+                          "target_field": ["B", "A", ""],
+                          "target_value": [100, 500, ""],
+                          "remove_row": [0, 0, 1], })
+    ).equals(pandas.DataFrame({"A": [1, 500], "B": [100, 5]}))
 
 
 def test_replace_indices():
